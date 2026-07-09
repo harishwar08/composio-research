@@ -8,7 +8,7 @@ verification loop.
 **The deliverable is [`index.html`](index.html)** — a single, self-explanatory
 case-study page (open it in a browser). Everything below is the pipeline that produced it.
 
-> **▶ Live case study:** **https://composio-100-research.vercel.app**
+> **▶ Live case study:** **https://composio-research.vercel.app**
 > &nbsp;•&nbsp; **Reproduce every number with no API key:** `python src/patterns.py`
 
 ---
@@ -103,7 +103,7 @@ python src/verify_agent.py      # independent adversarial re-check on the sample
 
 The page is one self-contained static file, so there is no build step.
 
-- **Live now on Vercel:** https://composio-100-research.vercel.app
+- **Live now on Vercel:** https://composio-research.vercel.app
 - **Redeploy / other hosts:** import the repo on Vercel or Netlify (framework "Other", no build
   step), or use GitHub Pages — `index.html` at the repo root is served at `/` automatically, no config.
 
