@@ -23,3 +23,5 @@ Thumbs.db
 # scratch / logs
 scratchpad/
 *.log
+
+.vercel

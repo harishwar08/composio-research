@@ -13,7 +13,7 @@ from collections import Counter
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 D = os.path.join(ROOT, "data")
 TEMPLATE = os.path.join(ROOT, "site", "template.html")
-OUT = os.path.join(ROOT, "site", "index.html")
+OUT = os.path.join(ROOT, "index.html")   # repo-root so any static host serves it at "/"
 
 
 def load(name):

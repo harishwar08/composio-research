@@ -5,10 +5,10 @@ auth method, self-serve vs gated, API surface, existing MCP, and a buildability 
 then **find the patterns** across all 100 and **prove the answers are accurate** with a
 verification loop.
 
-**The deliverable is [`site/index.html`](site/index.html)** — a single, self-explanatory
+**The deliverable is [`index.html`](index.html)** — a single, self-explanatory
 case-study page (open it in a browser). Everything below is the pipeline that produced it.
 
-> **▶ Live case study:** `<add your Vercel URL here after deploying>`
+> **▶ Live case study:** **https://composio-100-research.vercel.app**
 > &nbsp;•&nbsp; **Reproduce every number with no API key:** `python src/patterns.py`
 
 ---
@@ -43,7 +43,7 @@ data/results.json              (final, 100 rows; `verified`/`corrected` flags)
         ▼  ④ patterns.py         cluster → distributions + headline
 data/patterns.json
         │
-        ▼  ⑤ site/index.html     the case study (data inlined; open in a browser)
+        ▼  ⑤ index.html     the case study (data inlined; open in a browser)
 ```
 
 | File | Role |
@@ -52,7 +52,7 @@ data/patterns.json
 | `src/research_agent.py` | Stage ①. Claude Messages API + server-side `web_search`, structured output forced via a tool. |
 | `src/verify_agent.py` | Stage ②. Independent verifier + stricter grader; prints the human-adjudication queue. |
 | `src/patterns.py` | Stage ④. Reads `results.json`, writes `patterns.json`, prints every distribution. |
-| `src/build_site.py` | Stage ⑤. Injects the 3 JSON files into `site/template.html` → self-contained `site/index.html`. |
+| `src/build_site.py` | Stage ⑤. Injects the 3 JSON files into `site/template.html` → self-contained `index.html`. |
 | `data/results.baseline.json` | The **before** snapshot (knowledge-only first pass) — kept so the accuracy delta is real. |
 | `data/results.json` | The **after** dataset (100 apps, reconciled). |
 | `data/verification.json` | The 18-app hits/misses grading + the honest "what we got wrong". |
@@ -85,7 +85,7 @@ is filterable/sortable, and the accuracy proof (86.1% → ~100%, with every hit 
 ```bash
 git clone <this-repo> && cd composio-100-research
 python src/patterns.py          # prints every distribution shown on the page
-python src/build_site.py        # regenerates site/index.html from the JSON
+python src/build_site.py        # regenerates index.html from the JSON
 ```
 
 **Re-run the agent end-to-end (needs a key):**
@@ -103,11 +103,9 @@ python src/verify_agent.py      # independent adversarial re-check on the sample
 
 The page is one self-contained static file, so there is no build step.
 
-- **Vercel:** import the GitHub repo and deploy. A root `vercel.json` already rewrites `/` →
-  `site/index.html`, so it works with **zero configuration**. (Alternatively, set **Root Directory =
-  `site`** in the import screen and skip `vercel.json`.)
-- **Netlify / GitHub Pages / drag-drop:** serve the repo and open `/site/index.html` (or set the
-  publish directory to `site`).
+- **Live now on Vercel:** https://composio-100-research.vercel.app
+- **Redeploy / other hosts:** import the repo on Vercel or Netlify (framework "Other", no build
+  step), or use GitHub Pages — `index.html` at the repo root is served at `/` automatically, no config.
 
 Deployed on a normal host (no strict CSP), the *General Sans* font loads from its CDN and the page
 renders pixel-perfect.
@@ -130,5 +128,5 @@ Marked `COMPOSIO` in `research_agent.py`. Two spots, both optional and gated on 
 ## Honesty notes / limitations
 
 - Verification was measured on an **18-app stratified sample** (18%), not all 100. The other 82 carry a `confidence` field; `mcp_status` is the lowest-confidence dimension there (see the caveat in `data/results.json`).
-- `data/results.json` is the single source of truth; `site/index.html` inlines a copy of it so the page is self-contained (Artifacts/static hosting can't fetch local files).
+- `data/results.json` is the single source of truth; `index.html` inlines a copy of it so the page is self-contained (Artifacts/static hosting can't fetch local files).
 - **Design/fonts:** the page uses a warm editorial theme and loads the *General Sans* typeface from the Fontshare CDN with an `Inter`/system fallback — if that CDN is blocked (offline, or a strict-CSP host), it degrades to a clean system-sans and everything else still works. The page was render-verified headless (Puppeteer) with zero JS errors.
