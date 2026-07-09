@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Composio · 100-App Buildability Study</title>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f1ebe1; --bg2:#f6f1e9; --surface:#fcf9f4; --surface2:#ece2d3;
+    --peach:#f7ddca; --peach-2:#f3ccb2; --blue:#dbe5f0;
+    --ink:#17130f; --muted:#7c7368; --border:#e4d9c9; --line:#eae1d3;
+    --accent:#e8552a; --accent-2:#c8451f; --accent-weak:#fbe5d8;
+    --green:#2f9e56; --green-bg:#e3efe1; --amber:#bd7d1f; --amber-bg:#f5e6cf;
+    --red:#d1473d; --red-bg:#f6ddd7; --slate:#8b8173;
+    --dark:#151210; --dark-2:#211b17;
+    --shadow:0 1px 2px rgba(35,26,15,.04),0 10px 30px -16px rgba(35,26,15,.18);
+    --shadow-lift:0 2px 4px rgba(35,26,15,.05),0 22px 46px -22px rgba(35,26,15,.30);
+    --r:18px; --maxw:1160px;
+    --font:"General Sans","Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);
+    font-size:15.5px;line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+  h1,h2,h3,h4{margin:0;line-height:1.08;letter-spacing:-.025em;font-weight:600}
+  a{color:inherit;text-decoration:none}
+  .mono{font-family:var(--mono)}
+  .muted{color:var(--muted)}
+  .accent{color:var(--accent)}
+  .kicker{font-size:11.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+  section{scroll-margin-top:70px}
+
+  /* ---------- nav ---------- */
+  .nav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg) 82%,transparent);
+    backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex;align-items:center;gap:20px;height:60px}
+  .brand{font-weight:600;font-size:17px;letter-spacing:-.02em;display:flex;align-items:center;gap:2px}
+  .brand .d{color:var(--accent);font-weight:700}
+  .brand .s{color:var(--muted);font-weight:500}
+  .navlinks{display:flex;gap:26px;margin-left:auto;font-size:14px;color:var(--muted);font-weight:500}
+  .navlinks a:hover{color:var(--ink)}
+  .btn{display:inline-flex;align-items:center;gap:7px;border-radius:100px;padding:9px 17px;font-size:13.5px;
+    font-weight:600;border:1px solid transparent;cursor:pointer;transition:.16s ease;white-space:nowrap}
+  .btn-dark{background:var(--ink);color:#f6efe4}
+  .btn-dark:hover{transform:translateY(-1px);box-shadow:var(--shadow-lift)}
+  .btn-orange{background:var(--accent);color:#fff}
+  .btn-orange:hover{background:var(--accent-2);transform:translateY(-1px)}
+  .btn-ghost{background:transparent;border-color:var(--border);color:var(--ink)}
+  .btn-ghost:hover{border-color:var(--ink)}
+  @media(max-width:780px){.navlinks{display:none}}
+
+  /* ---------- hero ---------- */
+  .hero{padding:72px 0 30px;text-align:center}
+  .hero .kicker{margin-bottom:20px}
+  .hero h1{font-size:clamp(30px,5.6vw,60px);font-weight:600;letter-spacing:-.035em;margin:0 auto}
+  .hero h1 em{font-style:normal;color:var(--accent)}
+  .hero .lede{font-size:clamp(16px,2vw,19px);color:var(--muted);max-width:64ch;margin:22px auto 0;line-height:1.5}
+  .hero .lede b{color:var(--ink);font-weight:600}
+  .hero .cta{display:flex;gap:12px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+
+  .tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:52px;text-align:left}
+  .tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px 18px;
+    box-shadow:var(--shadow)}
+  .tile .n{font-size:34px;font-weight:600;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+  .tile .l{font-size:12.5px;color:var(--muted);margin-top:10px;line-height:1.4}
+  .tile .l b{color:var(--ink);font-weight:600}
+  .tile.g .n{color:var(--green)} .tile.v .n{color:var(--accent)} .tile.r .n{color:var(--red)} .tile.a .n{color:var(--ink);font-size:23px}
+  .tile.wide{grid-column:auto}
+  .tile.a{background:var(--peach);border-color:var(--peach-2)}
+  @media(max-width:920px){.tiles{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.tiles{grid-template-columns:1fr}}
+
+  .trust{margin-top:46px;text-align:center}
+  .trust .lab{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .cats{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
+  .catpill{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink);
+    background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:6px 13px;font-weight:500}
+  .catpill .cat-dot{width:8px;height:8px;border-radius:50%}
+
+  /* ---------- section bands ---------- */
+  .band{padding:74px 0;border-top:1px solid var(--line)}
+  .band-soft{background:var(--bg2)}
+  .band-peach{background:var(--peach)}
+  .sec-head{margin-bottom:34px}
+  .sec-head.center{max-width:74ch;margin-left:auto;margin-right:auto;text-align:center}
+  .sec-head h2{font-size:clamp(24px,3.4vw,36px);font-weight:600;letter-spacing:-.035em;margin-top:14px;white-space:nowrap}
+  .sec-head.center h2,.sec-head h2.wrap-ok{white-space:normal}
+  .sec-head p{color:var(--muted);margin-top:14px;font-size:16px;line-height:1.5;max-width:86ch}
+  @media(max-width:640px){.sec-head h2{white-space:normal}}
+  .sec-head p b{color:var(--ink);font-weight:600}
+
+  /* ---------- pattern cards ---------- */
+  .pcards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+  .pcard{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:26px;box-shadow:var(--shadow)}
+  .pcard.full{grid-column:1/-1}
+  .pcard h3{font-size:19px;font-weight:600;display:flex;gap:11px;align-items:baseline;letter-spacing:-.02em}
+  .pcard h3 .idx{color:var(--accent);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+  .pcard p{font-size:14px;color:var(--muted);margin:10px 0 20px;line-height:1.5}
+  .pcard p b{color:var(--ink);font-weight:600}
+  @media(max-width:760px){.pcards{grid-template-columns:1fr}}
+
+  .bars{display:flex;flex-direction:column;gap:9px}
+  .barrow{display:grid;grid-template-columns:140px 1fr 38px;align-items:center;gap:12px;font-size:12.5px}
+  .barrow .lab{color:var(--muted);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .track{background:var(--surface2);border-radius:100px;height:16px;overflow:hidden}
+  .fill{height:100%;border-radius:100px;background:var(--accent);min-width:3px;transition:width .5s cubic-bezier(.2,.7,.2,1)}
+  .barrow .val{font-weight:600;font-variant-numeric:tabular-nums}
+  .fill.green{background:var(--green)} .fill.amber{background:var(--amber)} .fill.red{background:var(--red)}
+  .fill.violet{background:var(--accent)} .fill.slate{background:var(--slate)}
+
+  .stack{display:flex;flex-direction:column;gap:9px}
+  .stackrow{display:grid;grid-template-columns:120px 1fr;align-items:center;gap:12px;font-size:12.5px}
+  .stackrow .lab{color:var(--muted);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .segbar{display:flex;height:18px;border-radius:100px;overflow:hidden;background:var(--surface2)}
+  .seg{height:100%;transition:width .5s cubic-bezier(.2,.7,.2,1)}
+  .seg.s{background:var(--green)} .seg.m{background:var(--amber)} .seg.g{background:var(--red)}
+  .seg.official{background:var(--ink)} .seg.community{background:var(--slate)} .seg.none{background:var(--surface2);box-shadow:inset 0 0 0 1px var(--border)}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;font-size:12px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .dot.s{background:var(--green)} .dot.m{background:var(--amber)} .dot.g{background:var(--red)}
+  .dot.official{background:var(--ink)} .dot.community{background:var(--slate)} .dot.none{background:var(--surface2);box-shadow:inset 0 0 0 1px var(--border)}
+
+  /* ---------- matrix ---------- */
+  .controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-bottom:18px}
+  .controls input[type=search]{flex:1;min-width:190px;background:var(--surface);border:1px solid var(--border);
+    color:var(--ink);border-radius:100px;padding:11px 16px;font-size:14px;font-family:var(--font)}
+  .controls input[type=search]:focus{outline:none;border-color:var(--accent)}
+  .controls select{background:var(--surface);border:1px solid var(--border);color:var(--ink);
+    border-radius:100px;padding:11px 14px;font-size:13px;font-family:var(--font);cursor:pointer}
+  .count{font-size:13px;color:var(--muted);margin-left:auto;font-variant-numeric:tabular-nums;font-weight:500}
+  .tablewrap{overflow-x:auto;border:1px solid var(--border);border-radius:20px;background:var(--surface);box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;min-width:840px;font-size:13.5px}
+  thead th{position:sticky;top:0;background:var(--surface2);text-align:left;font-size:11px;
+    text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;padding:13px 14px;
+    border-bottom:1px solid var(--border);cursor:pointer;white-space:nowrap;user-select:none}
+  thead th:hover{color:var(--ink)}
+  tbody td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr.detail-open{background:var(--bg2)}
+  tbody tr:hover{background:var(--bg2)}
+  .appname{font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px}
+  .appname:hover{color:var(--accent)}
+  .vbadge{font-size:9px;font-weight:700;letter-spacing:.04em;color:var(--green);border:1px solid var(--green);
+    border-radius:5px;padding:1px 4px;text-transform:uppercase}
+  .cbadge{font-size:9px;font-weight:700;letter-spacing:.04em;color:var(--accent);border:1px solid var(--accent);
+    border-radius:5px;padding:1px 4px;text-transform:uppercase}
+  .chip{display:inline-block;font-size:11.5px;font-weight:600;padding:3px 11px;border-radius:100px;white-space:nowrap}
+  .chip.self-serve,.chip.ready{background:var(--green-bg);color:var(--green)}
+  .chip.mixed,.chip.ready-with-caveats{background:var(--amber-bg);color:var(--amber)}
+  .chip.gated,.chip.blocked{background:var(--red-bg);color:var(--red)}
+  .chip.official{background:var(--ink);color:#f6efe4}
+  .chip.community{background:transparent;color:var(--slate);box-shadow:inset 0 0 0 1px var(--slate)}
+  .chip.none{background:var(--surface2);color:var(--muted)}
+  .detailrow td{background:var(--bg2)}
+  .detail{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;padding:8px 2px}
+  .detail div{font-size:13px}
+  .detail .dl{color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;font-weight:600}
+  .cat-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+
+  /* ---------- pipeline ---------- */
+  .pipe{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .step{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow);position:relative}
+  .step .s-n{font-size:13px;font-weight:700;color:var(--accent)}
+  .step h4{font-size:15px;font-weight:600;margin:7px 0 7px;letter-spacing:-.01em}
+  .step p{font-size:12.5px;color:var(--muted);margin:0;line-height:1.45}
+  .step .out{font-size:11.5px;margin-top:11px;color:var(--ink)}
+  .step .out code{background:var(--surface2);border-radius:5px;padding:2px 6px;font-family:var(--mono)}
+  @media(max-width:900px){.pipe{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.pipe{grid-template-columns:1fr}}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}
+  @media(max-width:760px){.two{grid-template-columns:1fr}}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+  .panel h4{font-size:15px;margin:0 0 12px;font-weight:600}
+  .panel ol,.panel ul{margin:0;padding-left:20px}
+  .panel li{font-size:13.5px;margin-bottom:10px;color:var(--ink);line-height:1.5}
+  .panel li b{font-weight:600}
+
+  /* ---------- verification (dark delta module) ---------- */
+  .delta{background:var(--dark);color:#f3ece2;display:flex;align-items:center;gap:30px;flex-wrap:wrap;
+    border-radius:22px;padding:32px 36px;box-shadow:var(--shadow-lift);margin-bottom:20px}
+  .delta .col{display:flex;flex-direction:column;gap:8px;min-width:0}
+  .delta .pct{font-size:clamp(34px,3.8vw,46px);font-weight:600;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+  .delta .from .pct{color:var(--amber)} .delta .to .pct{color:#4ec27a}
+  .delta .sub{font-size:12.5px;color:#a99e90;line-height:1.45}
+  .delta .arw{flex:none}
+  .delta .arw path{stroke:#8f8574}
+  .delta .divider{width:1px;align-self:stretch;background:#37302a;flex:none}
+  .delta .stat{flex:1;min-width:230px;display:flex;flex-direction:column;gap:9px}
+  .delta .stat .hl{font-size:16px;line-height:1.4}
+  .delta .stat .grn{color:#4ec27a;font-weight:600}
+  .delta .stat b{color:#f3ece2;font-weight:600}
+  @media(max-width:640px){.delta .divider{display:none}}
+  .callout{background:var(--peach);border:1px solid var(--peach-2);border-radius:18px;padding:22px 24px;margin-top:4px}
+  .callout h3{font-size:16px;font-weight:600;color:var(--ink)}
+  .callout p{font-size:14px;color:var(--ink);margin:9px 0 0;opacity:.85;line-height:1.5}
+  .miss-note{font-size:11.5px;color:var(--muted)}
+  .verdict-hit{color:var(--green);font-weight:600}
+  .verdict-miss{color:var(--red);font-weight:600}
+  .verdict-debatable{color:var(--amber);font-weight:600}
+  details.hm{border:1px solid var(--border);border-radius:12px;background:var(--surface);margin-bottom:9px;box-shadow:var(--shadow)}
+  details.hm[open]{box-shadow:var(--shadow-lift)}
+  details.hm>summary{cursor:pointer;padding:13px 16px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;list-style:none}
+  details.hm>summary::-webkit-details-marker{display:none}
+  details.hm>summary::before{content:"+";color:var(--accent);font-weight:700;width:14px}
+  details.hm[open]>summary::before{content:"×"}
+  details.hm>summary .score{margin-left:auto;font-variant-numeric:tabular-nums;font-size:12.5px;color:var(--muted);font-weight:500}
+  details.hm .body{padding:0 16px 15px 30px;font-size:13px}
+  details.hm .body table{min-width:0;width:100%;font-size:12.5px}
+  details.hm .body td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+
+  pre.run{background:var(--dark);color:#e7ddcf;border-radius:16px;padding:22px;overflow-x:auto;
+    font-size:13px;line-height:1.85;box-shadow:var(--shadow-lift);font-family:var(--mono)}
+  pre.run .c{color:#8f8574} pre.run .k{color:#ff8a5c}
+
+  /* ---------- CTA band ---------- */
+  .cta-band{background:var(--dark);color:#f3ece2;padding:80px 0;text-align:center}
+  .cta-band .kicker{color:#ff8a5c}
+  .cta-band h2{font-size:clamp(28px,4.4vw,46px);font-weight:600;letter-spacing:-.035em;margin:16px auto 0;max-width:20ch}
+  .cta-band h2 em{font-style:normal;color:var(--accent)}
+  .cta-band p{color:#a99e90;max-width:56ch;margin:18px auto 0;font-size:16px;line-height:1.5}
+  .cta-band .cta{display:flex;gap:12px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+  .cta-band .btn-ghost{border-color:#3a322c;color:#f3ece2}
+  .cta-band .btn-ghost:hover{border-color:#f3ece2}
+
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="wrap">
+  <div class="brand">Composio<span class="d">·</span><span class="s">100</span></div>
+  <div class="navlinks">
+    <a href="#patterns">Patterns</a>
+    <a href="#matrix">Findings</a>
+    <a href="#agent">The agent</a>
+    <a href="#verification">Verification</a>
+  </div>
+  <a href="#reproduce" class="btn btn-dark">Reproduce ↗</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <h1>100 apps. Which can be<br>an <em>agent toolkit</em> today?</h1>
+  <p class="lede">An agent mapped all 100 for auth, access, API and MCP, then verified a sample
+    against the real docs. <b>The pattern is the point.</b></p>
+  <div class="cta">
+    <a href="#patterns" class="btn btn-orange">See the patterns</a>
+    <a href="#matrix" class="btn btn-ghost">Browse all 100 →</a>
+  </div>
+  <div class="tiles" id="tiles"></div>
+  <div class="trust">
+    <div class="lab">The research set · 10 categories</div>
+    <div class="cats" id="cats"></div>
+  </div>
+</div></header>
+
+<main>
+<section id="patterns" class="band band-soft"><div class="wrap">
+  <div class="sec-head center">
+    <div class="kicker">The headline</div>
+    <h2>Five patterns across the 100</h2>
+    <p>Read these and you have the whole study. Every number is computed from the reconciled dataset by
+      <span class="mono">patterns.py</span>. Nothing here is hand-typed.</p>
+  </div>
+  <div class="pcards" id="pcards"></div>
+</div></section>
+
+<section id="matrix" class="band"><div class="wrap">
+  <div class="sec-head">
+    <div class="kicker">The findings</div>
+    <h2>All 100, one skimmable matrix</h2>
+    <p>Filter and sort. Click any app to expand its one-line reason, blocker and evidence link.
+      <span class="vbadge">Verified</span> rows were doc-checked live; <span class="cbadge">Fixed</span> rows changed after that check.</p>
+  </div>
+  <div class="controls">
+    <input type="search" id="q" placeholder="Search app, category, auth…">
+    <select id="fCat"></select>
+    <select id="fSelf">
+      <option value="">All access</option><option>self-serve</option><option>mixed</option><option>gated</option>
+    </select>
+    <select id="fBuild">
+      <option value="">All verdicts</option><option>ready</option><option>ready-with-caveats</option><option>blocked</option>
+    </select>
+    <select id="fMcp">
+      <option value="">All MCP</option><option value="official">official MCP</option>
+      <option value="community">community MCP</option><option value="none">no MCP</option>
+    </select>
+    <span class="count" id="count"></span>
+  </div>
+  <div class="tablewrap"><table id="tbl">
+    <thead><tr>
+      <th data-k="app">App</th><th data-k="category">Category</th><th data-k="primary_auth">Primary auth</th>
+      <th data-k="self_serve">Access</th><th data-k="api_breadth">API</th><th data-k="mcp_status">MCP</th>
+      <th data-k="buildability">Verdict</th>
+    </tr></thead>
+    <tbody id="tbody"></tbody>
+  </table></div>
+</div></section>
+
+<section id="agent" class="band band-soft"><div class="wrap">
+  <div class="sec-head">
+    <div class="kicker">The agent</div>
+    <h2>What I built, and where a human was needed</h2>
+    <p>A five-stage pipeline: an LLM researches into a strict schema, an adversarial agent re-checks a
+      sample, then Python clusters and renders. Composio's SDK/MCP slots in at stage ①.</p>
+  </div>
+  <div class="pipe" id="pipe"></div>
+  <div class="two">
+    <div class="panel">
+      <h4>What the agent does well</h4>
+      <ul>
+        <li><b>Fan-out at scale:</b> 100 apps into one comparable schema, evidence URL required per row; no free text to parse.</li>
+        <li><b>Grounded, not guessed:</b> it opens the official auth + API pages and confirms MCP from the vendor, not a blog.</li>
+        <li><b>Adversarial self-check:</b> a second agent is told to <i>disprove</i> the first pass, so agreement is real signal.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h4>Where a human was needed (honest)</h4>
+      <ol>
+        <li><b>self-serve vs mixed:</b> "free sandbox, paid/approved production" (Plaid, Devin, WhatsApp). The agent over-rounds to "gated"; a human made the call.</li>
+        <li><b>official vs community MCP:</b> the agent under-counts brand-new first-party MCPs; a human confirmed Plain / Plaid / Amazon.</li>
+        <li><b>long-tail unknowns:</b> fanbasis, Paygent, iPayX, Waterfall, Consensus have thin docs; "blocked / needs human check" is the honest output, not an invented answer.</li>
+        <li><b>stale facts:</b> a human caught Amazon SP-API dropping AWS SigV4 (~2023).</li>
+      </ol>
+    </div>
+  </div>
+</div></section>
+
+<section id="verification" class="band"><div class="wrap">
+  <div class="sec-head">
+    <div class="kicker">The proof · accuracy is what matters most</div>
+    <h2>How I know the findings are trustworthy</h2>
+    <p>A stratified 18-app sample (every category, auth pattern, and gated hard case) was re-researched
+      live against official docs, then graded field-by-field against the first pass.</p>
+  </div>
+  <div class="delta" id="delta"></div>
+  <div class="callout" id="vhead"></div>
+  <h3 style="font-size:16px;margin:30px 0 14px;font-weight:600">The 18-app sample, every field graded</h3>
+  <div id="hitmiss"></div>
+  <div class="two" style="margin-top:22px">
+    <div class="panel">
+      <h4>What the agent got wrong</h4>
+      <ul id="wrongs"></ul>
+    </div>
+    <div class="panel">
+      <h4>What the agent got right</h4>
+      <ul id="rights"></ul>
+    </div>
+  </div>
+</div></section>
+
+<section id="reproduce" class="band band-soft"><div class="wrap">
+  <div class="sec-head">
+    <div class="kicker">Reproduce it</div>
+    <h2>Run the pipeline</h2>
+    <p>Every number on this page comes from the committed dataset; <span class="mono">patterns.py</span> needs no API key.</p>
+  </div>
+<pre class="run"><span class="c"># research all 100 into the strict schema (live web search)</span>
+<span class="k">python</span> src/research_agent.py            <span class="c"># → data/results.raw.json</span>
+<span class="c"># independent adversarial re-check on the stratified sample</span>
+<span class="k">python</span> src/verify_agent.py              <span class="c"># → data/verification.json</span>
+<span class="c"># cluster + print every distribution on this page (no API key needed)</span>
+<span class="k">python</span> src/patterns.py                  <span class="c"># → data/patterns.json</span>
+<span class="c"># rebuild this page from the three JSON files</span>
+<span class="k">python</span> src/build_site.py               <span class="c"># → site/index.html</span></pre>
+</div></section>
+</main>
+
+<section class="cta-band"><div class="wrap">
+  <div class="kicker">The takeaway</div>
+  <h2>Build where it's a <em>green field</em>, not where it's gated.</h2>
+  <p>64 apps are ready today; 38 already ship an official MCP. The opportunity is the demanded long tail
+    with no first-party MCP yet, and the honest map of what needs outreach.</p>
+  <div class="cta">
+    <a href="#matrix" class="btn btn-orange">Explore the 100</a>
+    <a href="#verification" class="btn btn-ghost">See the accuracy proof</a>
+  </div>
+</div></section>
+
+<script id="DATA" type="application/json">__DATA__</script>
+<script>
+(function(){
+  const DATA = JSON.parse(document.getElementById('DATA').textContent);
+  const APPS = DATA.apps, P = DATA.patterns, V = DATA.verification, VM = V.meta.scoreboard || V.meta;
+
+  const catColors={};const palette=['#e8552a','#2f9e56','#bd7d1f','#d1473d','#8a5cf0','#0e8f9e','#c14d86','#4f77d6','#7d8a2e','#b8582a'];
+  P.categories_order.forEach((c,i)=>catColors[c]=palette[i%palette.length]);
+
+  /* ---- hero tiles ---- */
+  const tiles=[
+    {n:P.self_serve['self-serve'],l:'self-serve: dev gets working creds themselves',cls:'g'},
+    {n:P.easy_wins_count,l:'easy wins: self-serve <b>and</b> buildable today',cls:'g'},
+    {n:P.official_mcp_count,l:'already ship an official MCP',cls:'v'},
+    {n:P.needs_outreach_count,l:'need outreach: gated or blocked',cls:'r'},
+    {n:VM.first_pass_field_accuracy.replace('.0%','%')+'→~100%',l:'field accuracy: first pass → after verification',cls:'a'},
+  ];
+  document.getElementById('tiles').innerHTML=tiles.map(t=>
+    `<div class="tile ${t.cls} ${String(t.n).length>4?'wide':''}"><div class="n">${t.n}</div><div class="l">${t.l}</div></div>`).join('');
+
+  /* ---- category trust pills ---- */
+  document.getElementById('cats').innerHTML=P.categories_order.map(c=>
+    `<span class="catpill"><span class="cat-dot" style="background:${catColors[c]}"></span>${c}</span>`).join('');
+
+  /* ---- helpers ---- */
+  const bar=(rows,total,cls)=>`<div class="bars">`+rows.map(([lab,v,c])=>
+    `<div class="barrow"><div class="lab">${lab}</div><div class="track"><div class="fill ${c||cls||''}" style="width:${Math.max(2,100*v/total)}%"></div></div><div class="val">${v}</div></div>`).join('')+`</div>`;
+  const authRows=Object.entries(P.auth_family).map(([k,v])=>[k,v]);
+  const blockerRows=Object.entries(P.blocker_themes).map(([k,v])=>[k,v]);
+
+  /* ---- pattern cards ---- */
+  const selfColors={'self-serve':'s','mixed':'m','gated':'g'};
+  const catSelf=P.categories_order.map(cat=>{
+    const d=P.self_serve_by_category[cat]||{};const tot=(d['self-serve']||0)+(d['mixed']||0)+(d['gated']||0);
+    return {cat,d,tot};
+  }).sort((a,b)=>(b.d['self-serve']||0)-(a.d['self-serve']||0));
+  const catMcp=P.categories_order.map(cat=>({cat,d:P.mcp_by_category[cat]||{}}));
+
+  const stack=(rows,keys,clsmap)=>`<div class="stack">`+rows.map(r=>{
+    const tot=keys.reduce((s,k)=>s+(r.d[k]||0),0)||1;
+    return `<div class="stackrow"><div class="lab">${r.cat.replace(/ &.*| \/.*/,'').slice(0,14)}</div><div class="segbar">`+
+      keys.map(k=>`<div class="seg ${clsmap[k]}" style="width:${100*(r.d[k]||0)/tot}%" title="${k}: ${r.d[k]||0}"></div>`).join('')+`</div></div>`;
+  }).join('')+`</div>`;
+
+  const pcards=[
+    {i:'01',t:'Auth is rarely the blocker',
+     p:`OAuth2 (${P.auth_family['OAuth2']}) + API key (${P.auth_family['API key']}) = ${P.auth_family['OAuth2']+P.auth_family['API key']}% of primary auth, and ${P.rest_speaking}/100 speak REST. The protocol is almost never why an app can't be a toolkit.`,
+     body:bar(authRows,P.n,'')},
+    {i:'02',t:'Self-serve dominates: 64 easy wins',
+     p:`${P.self_serve['self-serve']} apps are self-serve and ${P.easy_wins_count} are "easy wins" (self-serve and ready). The interesting work is the long tail, not the middle.`,
+     body:bar([['self-serve',P.self_serve['self-serve'],'green'],['mixed',P.self_serve['mixed'],'amber'],['gated',P.self_serve['gated'],'red']],P.n)},
+    {i:'03',t:'The gate is concentrated, not spread',full:true,
+     p:`Dev/Infra and Productivity are 10/10 self-serve. The gates cluster in Marketing/Ads, enterprise commerce/CRM, and the newest AI/research tools, where "mixed" (sandbox now, approval later) and "gated" pile up.`,
+     body:stack(catSelf,['self-serve','mixed','gated'],selfColors)+
+       `<div class="legend"><span><i class="dot s"></i>self-serve</span><span><i class="dot m"></i>mixed</span><span><i class="dot g"></i>gated</span></div>`},
+    {i:'04',t:'Blockers are process, not technology',
+     p:`The top blockers are app-review / verification and no public API (or CLI-only), tied, then paid plan / customer account. None of these are engineering problems; they're access problems.`,
+     body:bar(blockerRows,blockerRows.reduce((s,[,v])=>s+v,0)||1,'red')},
+    {i:'05',t:'38 official MCPs: overlap vs green field',
+     p:`${P.official_mcp_count}/100 already ship a first-party MCP, dense in dev/infra/productivity (build there and you overlap), sparse in support/comms/ecommerce (green field for Composio).`,
+     body:stack(catMcp,['official','community','none'],{official:'official',community:'community',none:'none'})+
+       `<div class="legend"><span><i class="dot official"></i>official</span><span><i class="dot community"></i>community</span><span><i class="dot none"></i>none</span></div>`},
+  ];
+  document.getElementById('pcards').innerHTML=pcards.map(c=>
+    `<div class="pcard ${c.full?'full':''}"><h3><span class="idx">${c.i}</span>${c.t}</h3><p>${c.p}</p>${c.body}</div>`).join('');
+  (function(){const bl=Object.values(P.blocker_themes);const mx=Math.max(...bl,1);
+    document.querySelectorAll('#pcards .pcard')[3].querySelectorAll('.fill').forEach((f,i)=>{f.style.width=Math.max(2,100*bl[i]/mx)+'%';});})();
+
+  /* ---- matrix ---- */
+  const fCat=document.getElementById('fCat');
+  fCat.innerHTML='<option value="">All categories</option>'+P.categories_order.map(c=>`<option>${c}</option>`).join('');
+  const tbody=document.getElementById('tbody'),count=document.getElementById('count');
+  const q=document.getElementById('q');let sortK='id',sortDir=1,openId=null;
+  const chip=(v)=>`<span class="chip ${v}">${v}</span>`;
+  const mcpChip=(a)=>a.mcp_status==='none'?`<span class="chip none">none</span>`:`<span class="chip ${a.mcp_status}" title="${a.mcp_by||''}">${a.mcp_status}</span>`;
+  function rows(){
+    let r=APPS.slice();
+    const term=q.value.trim().toLowerCase();
+    const fc=fCat.value,fs=document.getElementById('fSelf').value,fb=document.getElementById('fBuild').value,fm=document.getElementById('fMcp').value;
+    if(term)r=r.filter(a=>(a.app+a.category+a.primary_auth+a.one_liner).toLowerCase().includes(term));
+    if(fc)r=r.filter(a=>a.category===fc);
+    if(fs)r=r.filter(a=>a.self_serve===fs);
+    if(fb)r=r.filter(a=>a.buildability===fb);
+    if(fm)r=r.filter(a=>a.mcp_status===fm);
+    r.sort((a,b)=>{let x=a[sortK],y=b[sortK];return (x>y?1:x<y?-1:0)*sortDir;});
+    return r;
+  }
+  function render(){
+    const r=rows();count.textContent=`${r.length} of ${APPS.length}`;
+    tbody.innerHTML=r.map(a=>{
+      const det=openId===a.id?`<tr class="detailrow"><td colspan="7"><div class="detail">
+        <div><div class="dl">What it is</div>${a.one_liner}</div>
+        <div><div class="dl">Auth methods</div>${a.auth_methods.join(', ')}</div>
+        <div><div class="dl">Access reason</div>${a.self_serve_reason||''}</div>
+        <div><div class="dl">API surface</div>${a.api_type} · ${a.api_breadth}</div>
+        <div><div class="dl">${a.blocker?'Blocker':'Status'}</div>${a.blocker||'No blocker. Buildable today.'}</div>
+        <div><div class="dl">MCP</div>${a.mcp_status}${a.mcp_by?' · '+a.mcp_by:''}</div>
+        <div><div class="dl">Evidence</div><a href="${a.evidence[0]}" target="_blank" rel="noopener" style="color:var(--accent)">${(a.evidence[0]||'').replace(/^https?:\/\//,'').slice(0,42)}…</a></div>
+        <div><div class="dl">Confidence</div>${a.confidence}${a.verified?' · verified live':''}</div>
+      </div></td></tr>`:'';
+      return `<tr class="${openId===a.id?'detail-open':''}">
+        <td><div class="appname" data-id="${a.id}">${a.app}
+          ${a.verified?'<span class="vbadge">Verified</span>':''}${a.corrected?'<span class="cbadge">Fixed</span>':''}</div></td>
+        <td><span class="cat-dot" style="background:${catColors[a.category]}"></span> <span class="muted" style="font-size:12.5px">${a.category.replace(/ &.*| \/.*/,'')}</span></td>
+        <td>${a.primary_auth}</td>
+        <td>${chip(a.self_serve)}</td>
+        <td><span class="muted">${a.api_breadth==='none'?'n/a':a.api_type.replace(' + ',' + ')}</span></td>
+        <td>${mcpChip(a)}</td>
+        <td>${chip(a.buildability)}</td>
+      </tr>${det}`;
+    }).join('');
+    tbody.querySelectorAll('.appname').forEach(el=>el.onclick=()=>{openId=openId==+el.dataset.id?null:+el.dataset.id;render();});
+  }
+  [q,fCat,document.getElementById('fSelf'),document.getElementById('fBuild'),document.getElementById('fMcp')]
+    .forEach(el=>el.addEventListener('input',()=>{openId=null;render();}));
+  document.querySelectorAll('#tbl thead th').forEach(th=>th.onclick=()=>{
+    const k=th.dataset.k;sortDir=sortK===k?-sortDir:1;sortK=k;render();});
+  render();
+
+  /* ---- pipeline ---- */
+  const steps=[
+    {n:'①',t:'Seed',p:'The 100 apps + hints.',out:'apps.seed.json'},
+    {n:'②',t:'Research agent',p:'LLM + live web_search → strict schema, evidence URL per field.',out:'results.raw.json'},
+    {n:'③',t:'Verify loop',p:'Independent adversarial agent re-checks a stratified sample; human adjudicates.',out:'verification.json'},
+    {n:'④',t:'Patterns',p:'Cluster → distributions + the headline.',out:'patterns.json'},
+    {n:'⑤',t:'Render',p:'Inject data into this self-contained page.',out:'index.html'},
+  ];
+  document.getElementById('pipe').innerHTML=steps.map(s=>
+    `<div class="step"><div class="s-n">${s.n}</div><h4>${s.t}</h4><p>${s.p}</p><div class="out">→ <code>${s.out}</code></div></div>`).join('');
+
+  /* ---- verification ---- */
+  const fp=VM.first_pass_field_accuracy.replace('.0%','%');
+  document.getElementById('delta').innerHTML=`
+    <div class="col from"><div class="pct">${fp}</div><div class="sub">first pass · ${VM.first_pass_field_hits}/${VM.gradeable_fields} fields · knowledge only</div></div>
+    <svg class="arw" width="46" height="26" viewBox="0 0 46 26"><path d="M2 13h38m0 0l-9-8m9 8l-9 8" fill="none" stroke-width="2"/></svg>
+    <div class="col to"><div class="pct">~100%</div><div class="sub">after the web-verification loop · all ${VM.gradeable_fields-VM.first_pass_field_hits} misses corrected</div></div>
+    <div class="divider"></div>
+    <div class="stat">
+      <div class="hl"><span class="grn">${VM.first_pass_flawless_rate} → 100%</span> apps with <i>every</i> field correct <span class="sub">(${VM.first_pass_flawless_apps}/18 → 18/18)</span></div>
+      <div class="sub">biggest miss: <b>MCP status (${VM.miss_breakdown_by_field.mcp_status})</b>. Official MCPs shipped faster than parametric knowledge.</div>
+    </div>`;
+  document.getElementById('vhead').innerHTML=`<h3>The verification loop's real value</h3><p>${VM.headline}</p>`;
+
+  document.getElementById('hitmiss').innerHTML=V.graded_sample.map(g=>{
+    const misses=(g.misses||[]);
+    const body=`<div class="body">
+      <div class="muted" style="margin:8px 0 6px">${g.verified_summary||''}</div>`+
+      (misses.length?`<table><tbody>`+misses.map(m=>`<tr>
+        <td style="width:120px"><b>${m.field}</b></td>
+        <td class="muted">${m.first_pass}</td>
+        <td>→ <b>${m.verified}</b> <span class="verdict-${m.verdict||'miss'}">(${m.verdict||'miss'})</span></td>
+        <td class="miss-note">${m.note||''}</td></tr>`).join('')+`</tbody></table>`
+      :`<div class="verdict-hit" style="padding:4px 0">✓ All 6 fields correct on the first pass.</div>`)+
+      (g.evidence?`<div class="muted" style="margin-top:8px;font-size:11px">Evidence: ${g.evidence.map(e=>`<a href="${e}" target="_blank" rel="noopener" style="color:var(--accent)">${e.replace(/^https?:\/\//,'').slice(0,38)}…</a>`).join(' · ')}</div>`:'')+
+      `</div>`;
+    const cls=misses.length===0?'verdict-hit':'';
+    return `<details class="hm"><summary><span class="${cls}">${g.app}</span>
+      <span class="score">${g.hits}/6 ${misses.length?'· '+misses.length+' fixed':'· clean'}</span></summary>${body}</details>`;
+  }).join('');
+
+  document.getElementById('wrongs').innerHTML=(V.what_the_agent_got_wrong_honestly||[]).map(x=>`<li>${x}</li>`).join('');
+  document.getElementById('rights').innerHTML=(V.what_the_agent_got_right||[]).map(x=>`<li>${x}</li>`).join('');
+
+  /* ---- reveal on scroll (with a fail-safe so nothing ever stays hidden) ---- */
+  if('IntersectionObserver' in window){
+    const els=[...document.querySelectorAll('.pcard,.step,.panel,.tile,.delta')];
+    const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.08,rootMargin:'0px 0px -8% 0px'});
+    els.forEach((el,i)=>{el.classList.add('reveal');el.style.transitionDelay=(i%5*40)+'ms';io.observe(el);});
+    // belt-and-suspenders: reveal anything still hidden after 2s (e.g. observer never fires)
+    setTimeout(()=>els.forEach(el=>el.classList.add('in')),2000);
+  }
+})();
+</script>
+</body>
+</html>

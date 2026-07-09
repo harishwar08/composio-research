@@ -1,0 +1,25 @@
+# secrets — never commit API keys
+.env
+.env.*
+*.key
+secrets.*
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# node (only used locally for headless render tests)
+node_modules/
+package-lock.json
+package.json
+
+# os / editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# scratch / logs
+scratchpad/
+*.log

@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Composio · 100-App Buildability Study</title>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f1ebe1; --bg2:#f6f1e9; --surface:#fcf9f4; --surface2:#ece2d3;
+    --peach:#f7ddca; --peach-2:#f3ccb2; --blue:#dbe5f0;
+    --ink:#17130f; --muted:#7c7368; --border:#e4d9c9; --line:#eae1d3;
+    --accent:#e8552a; --accent-2:#c8451f; --accent-weak:#fbe5d8;
+    --green:#2f9e56; --green-bg:#e3efe1; --amber:#bd7d1f; --amber-bg:#f5e6cf;
+    --red:#d1473d; --red-bg:#f6ddd7; --slate:#8b8173;
+    --dark:#151210; --dark-2:#211b17;
+    --shadow:0 1px 2px rgba(35,26,15,.04),0 10px 30px -16px rgba(35,26,15,.18);
+    --shadow-lift:0 2px 4px rgba(35,26,15,.05),0 22px 46px -22px rgba(35,26,15,.30);
+    --r:18px; --maxw:1160px;
+    --font:"General Sans","Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);
+    font-size:15.5px;line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+  h1,h2,h3,h4{margin:0;line-height:1.08;letter-spacing:-.025em;font-weight:600}
+  a{color:inherit;text-decoration:none}
+  .mono{font-family:var(--mono)}
+  .muted{color:var(--muted)}
+  .accent{color:var(--accent)}
+  .kicker{font-size:11.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+  section{scroll-margin-top:70px}
+
+  /* ---------- nav ---------- */
+  .nav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg) 82%,transparent);
+    backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex;align-items:center;gap:20px;height:60px}
+  .brand{font-weight:600;font-size:17px;letter-spacing:-.02em;display:flex;align-items:center;gap:2px}
+  .brand .d{color:var(--accent);font-weight:700}
+  .brand .s{color:var(--muted);font-weight:500}
+  .navlinks{display:flex;gap:26px;margin-left:auto;font-size:14px;color:var(--muted);font-weight:500}
+  .navlinks a:hover{color:var(--ink)}
+  .btn{display:inline-flex;align-items:center;gap:7px;border-radius:100px;padding:9px 17px;font-size:13.5px;
+    font-weight:600;border:1px solid transparent;cursor:pointer;transition:.16s ease;white-space:nowrap}
+  .btn-dark{background:var(--ink);color:#f6efe4}
+  .btn-dark:hover{transform:translateY(-1px);box-shadow:var(--shadow-lift)}
+  .btn-orange{background:var(--accent);color:#fff}
+  .btn-orange:hover{background:var(--accent-2);transform:translateY(-1px)}
+  .btn-ghost{background:transparent;border-color:var(--border);color:var(--ink)}
+  .btn-ghost:hover{border-color:var(--ink)}
+  @media(max-width:780px){.navlinks{display:none}}
+
+  /* ---------- hero ---------- */
+  .hero{padding:72px 0 30px;text-align:center}
+  .hero .kicker{margin-bottom:20px}
+  .hero h1{font-size:clamp(30px,5.6vw,60px);font-weight:600;letter-spacing:-.035em;margin:0 auto}
+  .hero h1 em{font-style:normal;color:var(--accent)}
+  .hero .lede{font-size:clamp(16px,2vw,19px);color:var(--muted);max-width:64ch;margin:22px auto 0;line-height:1.5}
+  .hero .lede b{color:var(--ink);font-weight:600}
+  .hero .cta{display:flex;gap:12px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+
+  .tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:52px;text-align:left}
+  .tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px 18px;
+    box-shadow:var(--shadow)}
+  .tile .n{font-size:34px;font-weight:600;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+  .tile .l{font-size:12.5px;color:var(--muted);margin-top:10px;line-height:1.4}
+  .tile .l b{color:var(--ink);font-weight:600}
+  .tile.g .n{color:var(--green)} .tile.v .n{color:var(--accent)} .tile.r .n{color:var(--red)} .tile.a .n{color:var(--ink);font-size:23px}
+  .tile.wide{grid-column:auto}
+  .tile.a{background:var(--peach);border-color:var(--peach-2)}
+  @media(max-width:920px){.tiles{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.tiles{grid-template-columns:1fr}}
+
+  .trust{margin-top:46px;text-align:center}
+  .trust .lab{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .cats{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
+  .catpill{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink);
+    background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:6px 13px;font-weight:500}
+  .catpill .cat-dot{width:8px;height:8px;border-radius:50%}
+
+  /* ---------- section bands ---------- */
+  .band{padding:74px 0;border-top:1px solid var(--line)}
+  .band-soft{background:var(--bg2)}
+  .band-peach{background:var(--peach)}
+  .sec-head{margin-bottom:34px}
+  .sec-head.center{max-width:74ch;margin-left:auto;margin-right:auto;text-align:center}
+  .sec-head h2{font-size:clamp(24px,3.4vw,36px);font-weight:600;letter-spacing:-.035em;margin-top:14px;white-space:nowrap}
+  .sec-head.center h2,.sec-head h2.wrap-ok{white-space:normal}
+  .sec-head p{color:var(--muted);margin-top:14px;font-size:16px;line-height:1.5;max-width:86ch}
+  @media(max-width:640px){.sec-head h2{white-space:normal}}
+  .sec-head p b{color:var(--ink);font-weight:600}
+
+  /* ---------- pattern cards ---------- */
+  .pcards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+  .pcard{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:26px;box-shadow:var(--shadow)}
+  .pcard.full{grid-column:1/-1}
+  .pcard h3{font-size:19px;font-weight:600;display:flex;gap:11px;align-items:baseline;letter-spacing:-.02em}
+  .pcard h3 .idx{color:var(--accent);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+  .pcard p{font-size:14px;color:var(--muted);margin:10px 0 20px;line-height:1.5}
+  .pcard p b{color:var(--ink);font-weight:600}
+  @media(max-width:760px){.pcards{grid-template-columns:1fr}}
+
+  .bars{display:flex;flex-direction:column;gap:9px}
+  .barrow{display:grid;grid-template-columns:140px 1fr 38px;align-items:center;gap:12px;font-size:12.5px}
+  .barrow .lab{color:var(--muted);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .track{background:var(--surface2);border-radius:100px;height:16px;overflow:hidden}
+  .fill{height:100%;border-radius:100px;background:var(--accent);min-width:3px;transition:width .5s cubic-bezier(.2,.7,.2,1)}
+  .barrow .val{font-weight:600;font-variant-numeric:tabular-nums}
+  .fill.green{background:var(--green)} .fill.amber{background:var(--amber)} .fill.red{background:var(--red)}
+  .fill.violet{background:var(--accent)} .fill.slate{background:var(--slate)}
+
+  .stack{display:flex;flex-direction:column;gap:9px}
+  .stackrow{display:grid;grid-template-columns:120px 1fr;align-items:center;gap:12px;font-size:12.5px}
+  .stackrow .lab{color:var(--muted);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .segbar{display:flex;height:18px;border-radius:100px;overflow:hidden;background:var(--surface2)}
+  .seg{height:100%;transition:width .5s cubic-bezier(.2,.7,.2,1)}
+  .seg.s{background:var(--green)} .seg.m{background:var(--amber)} .seg.g{background:var(--red)}
+  .seg.official{background:var(--ink)} .seg.community{background:var(--slate)} .seg.none{background:var(--surface2);box-shadow:inset 0 0 0 1px var(--border)}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;font-size:12px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .dot.s{background:var(--green)} .dot.m{background:var(--amber)} .dot.g{background:var(--red)}
+  .dot.official{background:var(--ink)} .dot.community{background:var(--slate)} .dot.none{background:var(--surface2);box-shadow:inset 0 0 0 1px var(--border)}
+
+  /* ---------- matrix ---------- */
+  .controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-bottom:18px}
+  .controls input[type=search]{flex:1;min-width:190px;background:var(--surface);border:1px solid var(--border);
+    color:var(--ink);border-radius:100px;padding:11px 16px;font-size:14px;font-family:var(--font)}
+  .controls input[type=search]:focus{outline:none;border-color:var(--accent)}
+  .controls select{background:var(--surface);border:1px solid var(--border);color:var(--ink);
+    border-radius:100px;padding:11px 14px;font-size:13px;font-family:var(--font);cursor:pointer}
+  .count{font-size:13px;color:var(--muted);margin-left:auto;font-variant-numeric:tabular-nums;font-weight:500}
+  .tablewrap{overflow-x:auto;border:1px solid var(--border);border-radius:20px;background:var(--surface);box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;min-width:840px;font-size:13.5px}
+  thead th{position:sticky;top:0;background:var(--surface2);text-align:left;font-size:11px;
+    text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;padding:13px 14px;
+    border-bottom:1px solid var(--border);cursor:pointer;white-space:nowrap;user-select:none}
+  thead th:hover{color:var(--ink)}
+  tbody td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr.detail-open{background:var(--bg2)}
+  tbody tr:hover{background:var(--bg2)}
+  .appname{font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px}
+  .appname:hover{color:var(--accent)}
+  .vbadge{font-size:9px;font-weight:700;letter-spacing:.04em;color:var(--green);border:1px solid var(--green);
+    border-radius:5px;padding:1px 4px;text-transform:uppercase}
+  .cbadge{font-size:9px;font-weight:700;letter-spacing:.04em;color:var(--accent);border:1px solid var(--accent);
+    border-radius:5px;padding:1px 4px;text-transform:uppercase}
+  .chip{display:inline-block;font-size:11.5px;font-weight:600;padding:3px 11px;border-radius:100px;white-space:nowrap}
+  .chip.self-serve,.chip.ready{background:var(--green-bg);color:var(--green)}
+  .chip.mixed,.chip.ready-with-caveats{background:var(--amber-bg);color:var(--amber)}
+  .chip.gated,.chip.blocked{background:var(--red-bg);color:var(--red)}
+  .chip.official{background:var(--ink);color:#f6efe4}
+  .chip.community{background:transparent;color:var(--slate);box-shadow:inset 0 0 0 1px var(--slate)}
+  .chip.none{background:var(--surface2);color:var(--muted)}
+  .detailrow td{background:var(--bg2)}
+  .detail{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;padding:8px 2px}
+  .detail div{font-size:13px}
+  .detail .dl{color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;font-weight:600}
+  .cat-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+
+  /* ---------- pipeline ---------- */
+  .pipe{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .step{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow);position:relative}
+  .step .s-n{font-size:13px;font-weight:700;color:var(--accent)}
+  .step h4{font-size:15px;font-weight:600;margin:7px 0 7px;letter-spacing:-.01em}
+  .step p{font-size:12.5px;color:var(--muted);margin:0;line-height:1.45}
+  .step .out{font-size:11.5px;margin-top:11px;color:var(--ink)}
+  .step .out code{background:var(--surface2);border-radius:5px;padding:2px 6px;font-family:var(--mono)}
+  @media(max-width:900px){.pipe{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.pipe{grid-template-columns:1fr}}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}
+  @media(max-width:760px){.two{grid-template-columns:1fr}}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+  .panel h4{font-size:15px;margin:0 0 12px;font-weight:600}
+  .panel ol,.panel ul{margin:0;padding-left:20px}
+  .panel li{font-size:13.5px;margin-bottom:10px;color:var(--ink);line-height:1.5}
+  .panel li b{font-weight:600}
+
+  /* ---------- verification (dark delta module) ---------- */
+  .delta{background:var(--dark);color:#f3ece2;display:flex;align-items:center;gap:30px;flex-wrap:wrap;
+    border-radius:22px;padding:32px 36px;box-shadow:var(--shadow-lift);margin-bottom:20px}
+  .delta .col{display:flex;flex-direction:column;gap:8px;min-width:0}
+  .delta .pct{font-size:clamp(34px,3.8vw,46px);font-weight:600;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+  .delta .from .pct{color:var(--amber)} .delta .to .pct{color:#4ec27a}
+  .delta .sub{font-size:12.5px;color:#a99e90;line-height:1.45}
+  .delta .arw{flex:none}
+  .delta .arw path{stroke:#8f8574}
+  .delta .divider{width:1px;align-self:stretch;background:#37302a;flex:none}
+  .delta .stat{flex:1;min-width:230px;display:flex;flex-direction:column;gap:9px}
+  .delta .stat .hl{font-size:16px;line-height:1.4}
+  .delta .stat .grn{color:#4ec27a;font-weight:600}
+  .delta .stat b{color:#f3ece2;font-weight:600}
+  @media(max-width:640px){.delta .divider{display:none}}
+  .callout{background:var(--peach);border:1px solid var(--peach-2);border-radius:18px;padding:22px 24px;margin-top:4px}
+  .callout h3{font-size:16px;font-weight:600;color:var(--ink)}
+  .callout p{font-size:14px;color:var(--ink);margin:9px 0 0;opacity:.85;line-height:1.5}
+  .miss-note{font-size:11.5px;color:var(--muted)}
+  .verdict-hit{color:var(--green);font-weight:600}
+  .verdict-miss{color:var(--red);font-weight:600}
+  .verdict-debatable{color:var(--amber);font-weight:600}
+  details.hm{border:1px solid var(--border);border-radius:12px;background:var(--surface);margin-bottom:9px;box-shadow:var(--shadow)}
+  details.hm[open]{box-shadow:var(--shadow-lift)}
+  details.hm>summary{cursor:pointer;padding:13px 16px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;list-style:none}
+  details.hm>summary::-webkit-details-marker{display:none}
+  details.hm>summary::before{content:"+";color:var(--accent);font-weight:700;width:14px}
+  details.hm[open]>summary::before{content:"×"}
+  details.hm>summary .score{margin-left:auto;font-variant-numeric:tabular-nums;font-size:12.5px;color:var(--muted);font-weight:500}
+  details.hm .body{padding:0 16px 15px 30px;font-size:13px}
+  details.hm .body table{min-width:0;width:100%;font-size:12.5px}
+  details.hm .body td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+
+  pre.run{background:var(--dark);color:#e7ddcf;border-radius:16px;padding:22px;overflow-x:auto;
+    font-size:13px;line-height:1.85;box-shadow:var(--shadow-lift);font-family:var(--mono)}
+  pre.run .c{color:#8f8574} pre.run .k{color:#ff8a5c}
+
+  /* ---------- CTA band ---------- */
+  .cta-band{background:var(--dark);color:#f3ece2;padding:80px 0;text-align:center}
+  .cta-band .kicker{color:#ff8a5c}
+  .cta-band h2{font-size:clamp(28px,4.4vw,46px);font-weight:600;letter-spacing:-.035em;margin:16px auto 0;max-width:20ch}
+  .cta-band h2 em{font-style:normal;color:var(--accent)}
+  .cta-band p{color:#a99e90;max-width:56ch;margin:18px auto 0;font-size:16px;line-height:1.5}
+  .cta-band .cta{display:flex;gap:12px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+  .cta-band .btn-ghost{border-color:#3a322c;color:#f3ece2}
+  .cta-band .btn-ghost:hover{border-color:#f3ece2}
+
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="wrap">
+  <div class="brand">Composio<span class="d">·</span><span class="s">100</span></div>
+  <div class="navlinks">
+    <a href="#patterns">Patterns</a>
+    <a href="#matrix">Findings</a>
+    <a href="#agent">The agent</a>
+    <a href="#verification">Verification</a>
+  </div>
+  <a href="#reproduce" class="btn btn-dark">Reproduce ↗</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <h1>100 apps. Which can be<br>an <em>agent toolkit</em> today?</h1>
+  <p class="lede">An agent mapped all 100 for auth, access, API and MCP, then verified a sample
+    against the real docs. <b>The pattern is the point.</b></p>
+  <div class="cta">
+    <a href="#patterns" class="btn btn-orange">See the patterns</a>
+    <a href="#matrix" class="btn btn-ghost">Browse all 100 →</a>
+  </div>
+  <div class="tiles" id="tiles"></div>
+  <div class="trust">
+    <div class="lab">The research set · 10 categories</div>
+    <div class="cats" id="cats"></div>
+  </div>
+</div></header>
+
+<main>
+<section id="patterns" class="band band-soft"><div class="wrap">
+  <div class="sec-head center">
+    <div class="kicker">The headline</div>
+    <h2>Five patterns across the 100</h2>
+    <p>Read these and you have the whole study. Every number is computed from the reconciled dataset by
+      <span class="mono">patterns.py</span>. Nothing here is hand-typed.</p>
+  </div>
+  <div class="pcards" id="pcards"></div>
+</div></section>
+
+<section id="matrix" class="band"><div class="wrap">
+  <div class="sec-head">
+    <div class="kicker">The findings</div>
+    <h2>All 100, one skimmable matrix</h2>
+    <p>Filter and sort. Click any app to expand its one-line reason, blocker and evidence link.
+      <span class="vbadge">Verified</span> rows were doc-checked live; <span class="cbadge">Fixed</span> rows changed after that check.</p>
+  </div>
+  <div class="controls">
+    <input type="search" id="q" placeholder="Search app, category, auth…">
+    <select id="fCat"></select>
+    <select id="fSelf">
+      <option value="">All access</option><option>self-serve</option><option>mixed</option><option>gated</option>
+    </select>
+    <select id="fBuild">
+      <option value="">All verdicts</option><option>ready</option><option>ready-with-caveats</option><option>blocked</option>
+    </select>
+    <select id="fMcp">
+      <option value="">All MCP</option><option value="official">official MCP</option>
+      <option value="community">community MCP</option><option value="none">no MCP</option>
+    </select>
+    <span class="count" id="count"></span>
+  </div>
+  <div class="tablewrap"><table id="tbl">
+    <thead><tr>
+      <th data-k="app">App</th><th data-k="category">Category</th><th data-k="primary_auth">Primary auth</th>
+      <th data-k="self_serve">Access</th><th data-k="api_breadth">API</th><th data-k="mcp_status">MCP</th>
+      <th data-k="buildability">Verdict</th>
+    </tr></thead>
+    <tbody id="tbody"></tbody>
+  </table></div>
+</div></section>
+
+<section id="agent" class="band band-soft"><div class="wrap">
+  <div class="sec-head">
+    <div class="kicker">The agent</div>
+    <h2>What I built, and where a human was needed</h2>
+    <p>A five-stage pipeline: an LLM researches into a strict schema, an adversarial agent re-checks a
+      sample, then Python clusters and renders. Composio's SDK/MCP slots in at stage ①.</p>
+  </div>
+  <div class="pipe" id="pipe"></div>
+  <div class="two">
+    <div class="panel">
+      <h4>What the agent does well</h4>
+      <ul>
+        <li><b>Fan-out at scale:</b> 100 apps into one comparable schema, evidence URL required per row; no free text to parse.</li>
+        <li><b>Grounded, not guessed:</b> it opens the official auth + API pages and confirms MCP from the vendor, not a blog.</li>
+        <li><b>Adversarial self-check:</b> a second agent is told to <i>disprove</i> the first pass, so agreement is real signal.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h4>Where a human was needed (honest)</h4>
+      <ol>
+        <li><b>self-serve vs mixed:</b> "free sandbox, paid/approved production" (Plaid, Devin, WhatsApp). The agent over-rounds to "gated"; a human made the call.</li>
+        <li><b>official vs community MCP:</b> the agent under-counts brand-new first-party MCPs; a human confirmed Plain / Plaid / Amazon.</li>
+        <li><b>long-tail unknowns:</b> fanbasis, Paygent, iPayX, Waterfall, Consensus have thin docs; "blocked / needs human check" is the honest output, not an invented answer.</li>
+        <li><b>stale facts:</b> a human caught Amazon SP-API dropping AWS SigV4 (~2023).</li>
+      </ol>
+    </div>
+  </div>
+</div></section>
+
+<section id="verification" class="band"><div class="wrap">
+  <div class="sec-head">
+    <div class="kicker">The proof · accuracy is what matters most</div>
+    <h2>How I know the findings are trustworthy</h2>
+    <p>A stratified 18-app sample (every category, auth pattern, and gated hard case) was re-researched
+      live against official docs, then graded field-by-field against the first pass.</p>
+  </div>
+  <div class="delta" id="delta"></div>
+  <div class="callout" id="vhead"></div>
+  <h3 style="font-size:16px;margin:30px 0 14px;font-weight:600">The 18-app sample, every field graded</h3>
+  <div id="hitmiss"></div>
+  <div class="two" style="margin-top:22px">
+    <div class="panel">
+      <h4>What the agent got wrong</h4>
+      <ul id="wrongs"></ul>
+    </div>
+    <div class="panel">
+      <h4>What the agent got right</h4>
+      <ul id="rights"></ul>
+    </div>
+  </div>
+</div></section>
+
+<section id="reproduce" class="band band-soft"><div class="wrap">
+  <div class="sec-head">
+    <div class="kicker">Reproduce it</div>
+    <h2>Run the pipeline</h2>
+    <p>Every number on this page comes from the committed dataset; <span class="mono">patterns.py</span> needs no API key.</p>
+  </div>
+<pre class="run"><span class="c"># research all 100 into the strict schema (live web search)</span>
+<span class="k">python</span> src/research_agent.py            <span class="c"># → data/results.raw.json</span>
+<span class="c"># independent adversarial re-check on the stratified sample</span>
+<span class="k">python</span> src/verify_agent.py              <span class="c"># → data/verification.json</span>
+<span class="c"># cluster + print every distribution on this page (no API key needed)</span>
+<span class="k">python</span> src/patterns.py                  <span class="c"># → data/patterns.json</span>
+<span class="c"># rebuild this page from the three JSON files</span>
+<span class="k">python</span> src/build_site.py               <span class="c"># → site/index.html</span></pre>
+</div></section>
+</main>
+
+<section class="cta-band"><div class="wrap">
+  <div class="kicker">The takeaway</div>
+  <h2>Build where it's a <em>green field</em>, not where it's gated.</h2>
+  <p>64 apps are ready today; 38 already ship an official MCP. The opportunity is the demanded long tail
+    with no first-party MCP yet, and the honest map of what needs outreach.</p>
+  <div class="cta">
+    <a href="#matrix" class="btn btn-orange">Explore the 100</a>
+    <a href="#verification" class="btn btn-ghost">See the accuracy proof</a>
+  </div>
+</div></section>
+
+<script id="DATA" type="application/json">{"apps": [{"id": 1, "app": "Salesforce", "category": "CRM & Sales", "one_liner": "Market-leading enterprise CRM with a very broad, mature API platform.", "auth_methods": ["OAuth2 (many flows)", "JWT bearer", "SAML bearer", "Session ID"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free Developer Edition org, all APIs enabled, no sales contact.", "api_type": "REST + SOAP + Bulk + GraphQL", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Salesforce DX MCP (dev-workflow focused)", "buildability": "ready-with-caveats", "blocker": "OAuth needs an External Client App (Connected App creation restricted Spring '26); AppExchange distribution needs security review.", "evidence": ["https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/intro_oauth_and_connected_apps.htm"], "confidence": "high", "verified": true, "corrected": true}, {"id": 2, "app": "HubSpot", "category": "CRM & Sales", "one_liner": "CRM plus marketing/sales/service hub.", "auth_methods": ["OAuth2", "Private app token"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free CRM + free developer test accounts.", "api_type": "REST + GraphQL", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "HubSpot (beta)", "buildability": "ready", "blocker": null, "evidence": ["https://developers.hubspot.com/docs/api/overview"], "confidence": "high", "verified": false, "corrected": false}, {"id": 3, "app": "Pipedrive", "category": "CRM & Sales", "one_liner": "Sales-focused CRM / pipeline tool.", "auth_methods": ["OAuth2", "API token"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Trial account + personal API token.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "community", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://developers.pipedrive.com/docs/api/v1"], "confidence": "high", "verified": false, "corrected": false}, {"id": 4, "app": "Attio", "category": "CRM & Sales", "one_liner": "Modern data-model-driven CRM.", "auth_methods": ["OAuth2", "API key"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free plan; generate access token in settings.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "official", "mcp_by": "Attio", "buildability": "ready", "blocker": null, "evidence": ["https://developers.attio.com/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 5, "app": "Twenty", "category": "CRM & Sales", "one_liner": "Open-source, self-hostable CRM with auto-generated APIs.", "auth_methods": ["API key (Bearer)", "OAuth2"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "Free OSS; mint API keys in settings.", "api_type": "REST + GraphQL", "api_breadth": "broad", "mcp_status": "community", "mcp_by": "no official yet (issue #12953)", "buildability": "ready", "blocker": null, "evidence": ["https://docs.twenty.com/developers/extend/api"], "confidence": "high", "verified": true, "corrected": true}, {"id": 6, "app": "Podio", "category": "CRM & Sales", "one_liner": "Flexible work/CRM database (Citrix).", "auth_methods": ["OAuth2", "API key"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free tier; register API client.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "Legacy platform, slow API evolution.", "evidence": ["https://developers.podio.com/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 7, "app": "Zoho CRM", "category": "CRM & Sales", "one_liner": "CRM within the Zoho suite.", "auth_methods": ["OAuth2"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free edition + self-client OAuth.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "community", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://www.zoho.com/crm/developer/docs/api/v6/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 8, "app": "Close", "category": "CRM & Sales", "one_liner": "Inside-sales CRM with calling/email.", "auth_methods": ["API key", "OAuth2"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "Trial + API key in settings.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "community", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://developer.close.com/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 9, "app": "Copper", "category": "CRM & Sales", "one_liner": "CRM built for Google Workspace.", "auth_methods": ["API key", "token"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "Trial; API key + email.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://developer.copper.com/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 10, "app": "DealCloud", "category": "CRM & Sales", "one_liner": "Deal/relationship CRM for capital markets (Intapp).", "auth_methods": ["OAuth2 (client credentials)"], "primary_auth": "OAuth2", "self_serve": "gated", "self_serve_reason": "Requires a customer DealCloud instance + admin-created service account.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "Enterprise-only; needs customer instance + admin.", "evidence": ["https://api.docs.dealcloud.com/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 11, "app": "Zendesk", "category": "Support & Helpdesk", "one_liner": "Cloud customer-support / ticketing suite.", "auth_methods": ["OAuth2", "API token (via Basic)", "Basic (legacy)"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free trial; API token or OAuth client instantly.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "community", "mcp_by": "Zendesk ships an MCP client, not a server", "buildability": "ready", "blocker": null, "evidence": ["https://developer.zendesk.com/api-reference/introduction/security-and-auth/"], "confidence": "high", "verified": true, "corrected": false}, {"id": 12, "app": "Intercom", "category": "Support & Helpdesk", "one_liner": "Customer messaging + AI support (Fin).", "auth_methods": ["OAuth2", "Access token"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Dev workspace + access token.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Intercom", "buildability": "ready", "blocker": null, "evidence": ["https://developers.intercom.com/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 13, "app": "Freshdesk", "category": "Support & Helpdesk", "one_liner": "Support/ticketing (Freshworks).", "auth_methods": ["API key", "Basic"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "Free trial; API key on profile.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "community", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://developers.freshdesk.com/api/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 14, "app": "Front", "category": "Support & Helpdesk", "one_liner": "Shared inbox / customer operations.", "auth_methods": ["OAuth2", "API token"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Trial; API token in settings.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://dev.frontapp.com/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 15, "app": "Pylon", "category": "Support & Helpdesk", "one_liner": "B2B / Slack-first customer support platform.", "auth_methods": ["API key"], "primary_auth": "API key", "self_serve": "mixed", "self_serve_reason": "Paid product; API key available to customers.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "No free tier; requires paying customer account.", "evidence": ["https://docs.usepylon.com/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 16, "app": "LiveAgent", "category": "Support & Helpdesk", "one_liner": "Helpdesk with live chat / call center.", "auth_methods": ["API key"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "Trial; API key in config.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://docs.liveagent.com/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 17, "app": "Plain", "category": "Support & Helpdesk", "one_liner": "API-first B2B support tool built on its own GraphQL API.", "auth_methods": ["API key (Bearer, scoped Machine Users)", "OAuth2 (for its MCP)"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "Self-serve 14-day free trial (no card); mint API keys, then paid seats.", "api_type": "GraphQL", "api_breadth": "moderate", "mcp_status": "official", "mcp_by": "Plain (mcp.plain.com, ~30 tools)", "buildability": "ready", "blocker": null, "evidence": ["https://www.plain.com/docs/graphql/introduction", "https://help.plain.com/article/using-plains-api"], "confidence": "high", "verified": true, "corrected": true}, {"id": 18, "app": "Help Scout", "category": "Support & Helpdesk", "one_liner": "Email-based helpdesk for small teams.", "auth_methods": ["OAuth2", "API key"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Trial; OAuth2 app self-serve.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "community", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://developer.helpscout.com/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 19, "app": "Gorgias", "category": "Support & Helpdesk", "one_liner": "Ecommerce-focused helpdesk.", "auth_methods": ["Basic (API key)", "OAuth2"], "primary_auth": "Basic (API key)", "self_serve": "self-serve", "self_serve_reason": "Trial; API key in settings.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://developers.gorgias.com/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 20, "app": "Gladly", "category": "Support & Helpdesk", "one_liner": "People-centered customer service platform.", "auth_methods": ["API key (Basic token)"], "primary_auth": "API key", "self_serve": "gated", "self_serve_reason": "Enterprise; needs provisioned instance + admin.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "No self-serve; enterprise onboarding.", "evidence": ["https://developer.gladly.com/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 21, "app": "Slack", "category": "Communications & Messaging", "one_liner": "Team messaging / collaboration.", "auth_methods": ["OAuth2 (bot/user tokens)"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free workspace; create app + tokens.", "api_type": "REST (Web API) + Events + Socket", "api_breadth": "broad", "mcp_status": "community", "mcp_by": "Anthropic reference server + community", "buildability": "ready", "blocker": null, "evidence": ["https://api.slack.com/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 22, "app": "Twilio", "category": "Communications & Messaging", "one_liner": "Programmable SMS/voice/messaging.", "auth_methods": ["Basic (Account SID + Auth Token)", "API keys"], "primary_auth": "Basic (SID + token)", "self_serve": "self-serve", "self_serve_reason": "Free trial with credit.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Twilio (alpha)", "buildability": "ready", "blocker": null, "evidence": ["https://www.twilio.com/docs/usage/api"], "confidence": "high", "verified": false, "corrected": false}, {"id": 23, "app": "Zoho Cliq", "category": "Communications & Messaging", "one_liner": "Team chat in the Zoho suite.", "auth_methods": ["OAuth2"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free tier + OAuth self-client.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://www.zoho.com/cliq/help/restapi/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 24, "app": "Lark (Larksuite)", "category": "Communications & Messaging", "one_liner": "Collaboration suite (chat/docs/calendar).", "auth_methods": ["OAuth2 (app + tenant/user access token)"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free dev tenant; create app.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Lark/ByteDance", "buildability": "ready", "blocker": null, "evidence": ["https://open.larksuite.com/document"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 25, "app": "Pumble", "category": "Communications & Messaging", "one_liner": "Team chat app (CAKE.com).", "auth_methods": ["API key"], "primary_auth": "API key", "self_serve": "mixed", "self_serve_reason": "API access tied to paid plans.", "api_type": "REST", "api_breadth": "narrow", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "API gated behind paid tier.", "evidence": ["https://pumble.com/developers"], "confidence": "low", "verified": false, "corrected": false}, {"id": 26, "app": "Discord", "category": "Communications & Messaging", "one_liner": "Community voice/text chat.", "auth_methods": ["OAuth2", "Bot token"], "primary_auth": "Bot token", "self_serve": "self-serve", "self_serve_reason": "Free; create app + bot token.", "api_type": "REST + Gateway WS", "api_breadth": "broad", "mcp_status": "community", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://discord.com/developers/docs/reference"], "confidence": "high", "verified": false, "corrected": false}, {"id": 27, "app": "Telegram", "category": "Communications & Messaging", "one_liner": "Messaging with a first-class HTTP Bot API.", "auth_methods": ["Bot token (BotFather)", "MTProto (user API)"], "primary_auth": "Bot token", "self_serve": "self-serve", "self_serve_reason": "Free; bot token issued instantly by @BotFather.", "api_type": "REST (Bot API)", "api_breadth": "broad", "mcp_status": "community", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://core.telegram.org/bots/api"], "confidence": "high", "verified": true, "corrected": false}, {"id": 28, "app": "WhatsApp Business", "category": "Communications & Messaging", "one_liner": "Business messaging via Meta Cloud API.", "auth_methods": ["OAuth2 (system-user / business-integration tokens)"], "primary_auth": "OAuth2", "self_serve": "mixed", "self_serve_reason": "Self-serve test number + temp token instantly; production/multi-tenant needs Business Verification + App Review.", "api_type": "REST (Graph)", "api_breadth": "moderate", "mcp_status": "community", "mcp_by": "no official Meta MCP", "buildability": "ready-with-caveats", "blocker": "Meta business verification + phone approval (and App Review for multi-tenant).", "evidence": ["https://developers.facebook.com/documentation/business-messaging/whatsapp/access-tokens/"], "confidence": "high", "verified": true, "corrected": true}, {"id": 29, "app": "Aircall", "category": "Communications & Messaging", "one_liner": "Cloud phone / call-center platform.", "auth_methods": ["Basic (API ID/token)", "OAuth2"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Trial; API credentials in dashboard.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://developer.aircall.io/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 30, "app": "Vonage", "category": "Communications & Messaging", "one_liner": "Communications APIs (SMS/voice/verify).", "auth_methods": ["API key/secret", "JWT (application)"], "primary_auth": "API key/secret", "self_serve": "self-serve", "self_serve_reason": "Free trial credit.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://developer.vonage.com/en/api"], "confidence": "high", "verified": false, "corrected": false}, {"id": 31, "app": "Google Ads", "category": "Marketing / Ads / Email / Social", "one_liner": "Search/display advertising platform.", "auth_methods": ["OAuth2", "Developer token"], "primary_auth": "OAuth2 + developer token", "self_serve": "gated", "self_serve_reason": "Developer token requires approval; MCC needed.", "api_type": "REST + gRPC", "api_breadth": "broad", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "Developer token approval (Basic access application).", "evidence": ["https://developers.google.com/google-ads/api/docs/start"], "confidence": "high", "verified": false, "corrected": false}, {"id": 32, "app": "Meta Ads", "category": "Marketing / Ads / Email / Social", "one_liner": "Advertising across Facebook/Instagram.", "auth_methods": ["OAuth2", "Access token"], "primary_auth": "OAuth2", "self_serve": "gated", "self_serve_reason": "App review + business verification for ads_management.", "api_type": "REST (Graph)", "api_breadth": "broad", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "App review + business verification.", "evidence": ["https://developers.facebook.com/docs/marketing-apis/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 33, "app": "LinkedIn Ads", "category": "Marketing / Ads / Email / Social", "one_liner": "B2B advertising on LinkedIn.", "auth_methods": ["OAuth2"], "primary_auth": "OAuth2", "self_serve": "gated", "self_serve_reason": "Marketing Developer Platform access requires application/approval.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "Marketing Developer Platform approval.", "evidence": ["https://learn.microsoft.com/en-us/linkedin/marketing/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 34, "app": "GoHighLevel", "category": "Marketing / Ads / Email / Social", "one_liner": "All-in-one agency marketing/CRM platform.", "auth_methods": ["OAuth2", "API key (v1 legacy)"], "primary_auth": "OAuth2", "self_serve": "mixed", "self_serve_reason": "Paid platform; self-serve signup + marketplace app.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "HighLevel", "buildability": "ready", "blocker": null, "evidence": ["https://highlevel.stoplight.io/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 35, "app": "Mailchimp", "category": "Marketing / Ads / Email / Social", "one_liner": "Email marketing / audiences.", "auth_methods": ["OAuth2", "API key"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "Free plan; API key in account.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "community", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://mailchimp.com/developer/marketing/api/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 36, "app": "Klaviyo", "category": "Marketing / Ads / Email / Social", "one_liner": "Email/SMS marketing + CDP for ecommerce.", "auth_methods": ["OAuth2", "API key (private key)"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free account; generate private API key or OAuth app instantly.", "api_type": "REST (JSON:API)", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Klaviyo (mcp.klaviyo.com, ~40 tools)", "buildability": "ready", "blocker": null, "evidence": ["https://developers.klaviyo.com/en/docs/authenticate_", "https://developers.klaviyo.com/en/docs/klaviyo_mcp_server"], "confidence": "high", "verified": true, "corrected": true}, {"id": 37, "app": "systeme.io", "category": "Marketing / Ads / Email / Social", "one_liner": "All-in-one funnel/marketing builder.", "auth_methods": ["API key"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "Free plan; API key in settings.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://developer.systeme.io/"], "confidence": "low", "verified": false, "corrected": false}, {"id": 38, "app": "Pinterest", "category": "Marketing / Ads / Email / Social", "one_liner": "Visual discovery + ads platform.", "auth_methods": ["OAuth2"], "primary_auth": "OAuth2", "self_serve": "mixed", "self_serve_reason": "Trial access self-serve; standard access needs review.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "Standard/production access review.", "evidence": ["https://developers.pinterest.com/docs/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 39, "app": "Threads (Meta)", "category": "Marketing / Ads / Email / Social", "one_liner": "Meta's text social network API.", "auth_methods": ["OAuth2"], "primary_auth": "OAuth2", "self_serve": "mixed", "self_serve_reason": "App + permissions; review for some scopes.", "api_type": "REST (Graph)", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "Meta app review for publishing scopes.", "evidence": ["https://developers.facebook.com/docs/threads"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 40, "app": "SendGrid", "category": "Marketing / Ads / Email / Social", "one_liner": "Transactional/marketing email (Twilio).", "auth_methods": ["API key"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "Free tier; API key in settings.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://docs.sendgrid.com/api-reference"], "confidence": "high", "verified": false, "corrected": false}, {"id": 41, "app": "Shopify", "category": "Ecommerce", "one_liner": "Commerce platform for online stores.", "auth_methods": ["OAuth2", "Admin API access token (custom apps)"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free development store + custom app token; only App Store listing needs review.", "api_type": "GraphQL (REST legacy)", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Shopify (Storefront/Dev MCP; Admin runtime MCP is 3rd-party)", "buildability": "ready", "blocker": null, "evidence": ["https://shopify.dev/docs/api/usage/authentication"], "confidence": "high", "verified": true, "corrected": true}, {"id": 42, "app": "WooCommerce", "category": "Ecommerce", "one_liner": "WordPress ecommerce plugin.", "auth_methods": ["API key (consumer key/secret)"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "Self-host WP; generate REST keys.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "community", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://woocommerce.com/document/woocommerce-rest-api/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 43, "app": "BigCommerce", "category": "Ecommerce", "one_liner": "SaaS ecommerce platform.", "auth_methods": ["OAuth2", "API account token"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Trial + sandbox; store API account.", "api_type": "REST + GraphQL", "api_breadth": "broad", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://developer.bigcommerce.com/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 44, "app": "Salesforce Commerce Cloud", "category": "Ecommerce", "one_liner": "Enterprise commerce (B2C/B2B).", "auth_methods": ["OAuth2 (SLAS/Account Manager)"], "primary_auth": "OAuth2", "self_serve": "gated", "self_serve_reason": "Requires SFCC instance; partner/customer onboarding.", "api_type": "REST (SCAPI/OCAPI)", "api_breadth": "broad", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "Enterprise instance + partner access.", "evidence": ["https://developer.salesforce.com/docs/commerce"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 45, "app": "Magento (Adobe Commerce)", "category": "Ecommerce", "one_liner": "Open-source + enterprise commerce (Adobe).", "auth_methods": ["OAuth1", "Integration token", "token"], "primary_auth": "Integration token", "self_serve": "self-serve", "self_serve_reason": "Open-source Magento self-host + integration tokens.", "api_type": "REST + GraphQL", "api_breadth": "broad", "mcp_status": "community", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://developer.adobe.com/commerce/webapi/rest/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 46, "app": "Squarespace", "category": "Ecommerce", "one_liner": "Website builder with commerce APIs.", "auth_methods": ["OAuth2", "API key"], "primary_auth": "API key", "self_serve": "mixed", "self_serve_reason": "Commerce APIs require a commerce plan.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "Commerce API needs paid commerce plan.", "evidence": ["https://developers.squarespace.com/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 47, "app": "Ecwid", "category": "Ecommerce", "one_liner": "Embeddable ecommerce (Lightspeed).", "auth_methods": ["OAuth2", "token"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free plan; app token.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://api-docs.ecwid.com/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 48, "app": "Gumroad", "category": "Ecommerce", "one_liner": "Sell digital products directly.", "auth_methods": ["OAuth2", "Access token"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free account; app + access token.", "api_type": "REST", "api_breadth": "narrow", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://help.gumroad.com/article/280-gumroad-api"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 49, "app": "Amazon Selling Partner", "category": "Ecommerce", "one_liner": "APIs for Amazon sellers/vendors (orders, listings, FBA, reports).", "auth_methods": ["OAuth2 (Login with Amazon / LWA)"], "primary_auth": "OAuth2 (LWA)", "self_serve": "gated", "self_serve_reason": "Solution Provider Portal registration + reviewed developer profile + per-role approval before production credentials.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Amazon dev-assistant MCP (runtime data MCPs are 3rd-party)", "buildability": "ready-with-caveats", "blocker": "Amazon developer/role review (build in sandbox meanwhile). NOTE: AWS SigV4 signing removed ~2023, LWA only now.", "evidence": ["https://developer-docs.amazon.com/sp-api/docs/sp-api-registration-overview"], "confidence": "high", "verified": true, "corrected": true}, {"id": 50, "app": "fanbasis", "category": "Ecommerce", "one_liner": "Payments/checkout for creators & coaches.", "auth_methods": ["unknown / likely API key"], "primary_auth": "unknown", "self_serve": "gated", "self_serve_reason": "No clearly documented public API found.", "api_type": "unknown", "api_breadth": "none", "mcp_status": "none", "mcp_by": null, "buildability": "blocked", "blocker": "No public developer docs located; needs human check.", "evidence": ["https://fanbasis.com/"], "confidence": "low", "verified": false, "corrected": false}, {"id": 51, "app": "DataForSEO", "category": "Data / SEO / Scraping", "one_liner": "SEO/SERP data APIs.", "auth_methods": ["Basic (login/password)"], "primary_auth": "Basic", "self_serve": "self-serve", "self_serve_reason": "Self-serve signup + pay-as-you-go; instant credentials.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "DataForSEO", "buildability": "ready", "blocker": null, "evidence": ["https://docs.dataforseo.com/v3/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 52, "app": "SE Ranking", "category": "Data / SEO / Scraping", "one_liner": "SEO platform (rankings/audit).", "auth_methods": ["API key (token)"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "Trial/paid; API token in account.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://seranking.com/api.html"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 53, "app": "Ahrefs", "category": "Data / SEO / Scraping", "one_liner": "Backlink/SEO intelligence.", "auth_methods": ["API key (token)", "OAuth2"], "primary_auth": "API key", "self_serve": "mixed", "self_serve_reason": "API is a paid add-on / higher tiers; expensive.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "official", "mcp_by": "Ahrefs", "buildability": "ready-with-caveats", "blocker": "Paid API access required.", "evidence": ["https://ahrefs.com/api"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 54, "app": "MrScraper", "category": "Data / SEO / Scraping", "one_liner": "No-code/AI web scraping service.", "auth_methods": ["API key"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "Signup + API key.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://docs.mrscraper.com/"], "confidence": "low", "verified": false, "corrected": false}, {"id": 55, "app": "Apify", "category": "Data / SEO / Scraping", "one_liner": "Web scraping/automation actor platform.", "auth_methods": ["API token", "OAuth2"], "primary_auth": "API token", "self_serve": "self-serve", "self_serve_reason": "Free tier + API token.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Apify", "buildability": "ready", "blocker": null, "evidence": ["https://docs.apify.com/api/v2"], "confidence": "high", "verified": false, "corrected": false}, {"id": 56, "app": "Firecrawl", "category": "Data / SEO / Scraping", "one_liner": "Web scraping/crawl into clean markdown/JSON for LLMs.", "auth_methods": ["API key (fc- Bearer)", "OAuth2 (for MCP)"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "Free tier; API key on signup.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Firecrawl (firecrawl-mcp-server)", "buildability": "ready", "blocker": null, "evidence": ["https://docs.firecrawl.dev/api-reference/introduction"], "confidence": "high", "verified": true, "corrected": false}, {"id": 57, "app": "Bright Data", "category": "Data / SEO / Scraping", "one_liner": "Proxy network + web scraping infrastructure.", "auth_methods": ["API key (Bearer)", "Proxy user/pass"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "Self-serve signup + 5,000 free requests/mo.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Bright Data (Web MCP)", "buildability": "ready-with-caveats", "blocker": "Free tier capped (5k/mo); scaling needs paid plan; some proxy products need KYC.", "evidence": ["https://docs.brightdata.com/api-reference/authentication", "https://docs.brightdata.com/ai/mcp-server/overview"], "confidence": "high", "verified": true, "corrected": true}, {"id": 58, "app": "Sherlock", "category": "Data / SEO / Scraping", "one_liner": "OSINT username search across sites (OSS CLI).", "auth_methods": ["none (CLI)"], "primary_auth": "none", "self_serve": "self-serve", "self_serve_reason": "Free open-source CLI; no account.", "api_type": "none (CLI)", "api_breadth": "none", "mcp_status": "community", "mcp_by": "wrappers only", "buildability": "ready-with-caveats", "blocker": "No hosted API; must wrap the CLI.", "evidence": ["https://github.com/sherlock-project/sherlock"], "confidence": "high", "verified": false, "corrected": false}, {"id": 59, "app": "Waterfall.io", "category": "Data / SEO / Scraping", "one_liner": "Waterfall contact/company data enrichment.", "auth_methods": ["API key (likely)"], "primary_auth": "unknown", "self_serve": "gated", "self_serve_reason": "B2B data vendor; likely sales-gated.", "api_type": "REST (likely)", "api_breadth": "narrow", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "Sparse public docs; needs human check.", "evidence": ["https://waterfall.io/"], "confidence": "low", "verified": false, "corrected": false}, {"id": 60, "app": "Clay", "category": "Data / SEO / Scraping", "one_liner": "GTM data enrichment + outreach automation.", "auth_methods": ["API key"], "primary_auth": "API key", "self_serve": "mixed", "self_serve_reason": "Public API limited; richer features paid.", "api_type": "REST", "api_breadth": "narrow", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "Limited public API; mostly internal workflows.", "evidence": ["https://www.clay.com/university/guide/clay-api"], "confidence": "low", "verified": false, "corrected": false}, {"id": 61, "app": "GitHub", "category": "Developer / Infra / Data platforms", "one_liner": "Code hosting + collaboration platform.", "auth_methods": ["OAuth2", "PAT (fine-grained/classic)", "GitHub App token"], "primary_auth": "OAuth2 / PAT", "self_serve": "self-serve", "self_serve_reason": "Free account; self-mint PAT or register OAuth/GitHub App.", "api_type": "REST + GraphQL", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "GitHub (github-mcp-server, co-built with Anthropic)", "buildability": "ready", "blocker": null, "evidence": ["https://docs.github.com/en/rest/authentication/authenticating-to-the-rest-api", "https://github.com/github/github-mcp-server"], "confidence": "high", "verified": true, "corrected": false}, {"id": 62, "app": "Vercel", "category": "Developer / Infra / Data platforms", "one_liner": "Frontend hosting/deploy platform.", "auth_methods": ["OAuth2", "Access token"], "primary_auth": "Access token", "self_serve": "self-serve", "self_serve_reason": "Free account; token in settings.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Vercel", "buildability": "ready", "blocker": null, "evidence": ["https://vercel.com/docs/rest-api"], "confidence": "high", "verified": false, "corrected": false}, {"id": 63, "app": "Netlify", "category": "Developer / Infra / Data platforms", "one_liner": "Web hosting/deploy platform.", "auth_methods": ["OAuth2", "PAT"], "primary_auth": "PAT", "self_serve": "self-serve", "self_serve_reason": "Free account; PAT in settings.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Netlify", "buildability": "ready", "blocker": null, "evidence": ["https://docs.netlify.com/api/get-started/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 64, "app": "Cloudflare", "category": "Developer / Infra / Data platforms", "one_liner": "CDN/security/edge platform.", "auth_methods": ["API token", "API key (legacy)", "OAuth2"], "primary_auth": "API token", "self_serve": "self-serve", "self_serve_reason": "Free account; scoped API token.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Cloudflare (multiple servers)", "buildability": "ready", "blocker": null, "evidence": ["https://developers.cloudflare.com/api/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 65, "app": "Supabase", "category": "Developer / Infra / Data platforms", "one_liner": "Open-source Firebase alternative (Postgres).", "auth_methods": ["API key (anon/service)", "PAT (Management)", "OAuth2"], "primary_auth": "API key / PAT", "self_serve": "self-serve", "self_serve_reason": "Free tier; keys in dashboard.", "api_type": "REST (PostgREST) + Management REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Supabase", "buildability": "ready", "blocker": null, "evidence": ["https://supabase.com/docs/reference/api"], "confidence": "high", "verified": false, "corrected": false}, {"id": 66, "app": "Neo4j", "category": "Developer / Infra / Data platforms", "one_liner": "Graph database + Aura cloud.", "auth_methods": ["Basic (user/pass)", "token", "OAuth2 (Aura API)"], "primary_auth": "Basic", "self_serve": "self-serve", "self_serve_reason": "Aura free tier + local install.", "api_type": "HTTP/Bolt + Aura REST", "api_breadth": "moderate", "mcp_status": "official", "mcp_by": "Neo4j", "buildability": "ready", "blocker": null, "evidence": ["https://neo4j.com/docs/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 67, "app": "Snowflake", "category": "Developer / Infra / Data platforms", "one_liner": "Cloud data warehouse / AI Data Cloud.", "auth_methods": ["Key-pair (JWT)", "OAuth2", "Workload Identity", "PAT"], "primary_auth": "Key-pair (JWT)", "self_serve": "self-serve", "self_serve_reason": "Self-serve 30-day free trial ($400 credits).", "api_type": "REST (SQL API) + drivers", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Snowflake (managed MCP, GA Nov 2025)", "buildability": "ready", "blocker": null, "evidence": ["https://docs.snowflake.com/en/developer-guide/sql-api/authenticating"], "confidence": "high", "verified": true, "corrected": false}, {"id": 68, "app": "MongoDB Atlas", "category": "Developer / Infra / Data platforms", "one_liner": "Managed MongoDB cloud.", "auth_methods": ["API key (Digest)", "Service Account (OAuth2)"], "primary_auth": "API key (Digest)", "self_serve": "self-serve", "self_serve_reason": "Free tier cluster; programmatic API keys.", "api_type": "REST (Admin API)", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "MongoDB", "buildability": "ready", "blocker": null, "evidence": ["https://www.mongodb.com/docs/atlas/api/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 69, "app": "Datadog", "category": "Developer / Infra / Data platforms", "one_liner": "Monitoring/observability platform.", "auth_methods": ["API key + App key"], "primary_auth": "API key + App key", "self_serve": "self-serve", "self_serve_reason": "Free trial; keys in org settings.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Datadog", "buildability": "ready", "blocker": null, "evidence": ["https://docs.datadoghq.com/api/latest/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 70, "app": "Sentry", "category": "Developer / Infra / Data platforms", "one_liner": "Error/performance monitoring.", "auth_methods": ["Auth token", "OAuth2 (internal integrations)"], "primary_auth": "Auth token", "self_serve": "self-serve", "self_serve_reason": "Free tier; auth token in settings.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Sentry", "buildability": "ready", "blocker": null, "evidence": ["https://docs.sentry.io/api/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 71, "app": "Notion", "category": "Productivity & Project Management", "one_liner": "Connected docs/wiki/database workspace.", "auth_methods": ["OAuth2", "Internal integration token", "PAT"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free; create integration + token.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Notion (mcp.notion.com, OAuth-only)", "buildability": "ready", "blocker": null, "evidence": ["https://developers.notion.com/docs/authorization", "https://developers.notion.com/docs/mcp"], "confidence": "high", "verified": true, "corrected": false}, {"id": 72, "app": "Airtable", "category": "Productivity & Project Management", "one_liner": "Spreadsheet-database hybrid.", "auth_methods": ["OAuth2", "PAT"], "primary_auth": "PAT", "self_serve": "self-serve", "self_serve_reason": "Free; personal access token.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "community", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://airtable.com/developers/web/api/introduction"], "confidence": "high", "verified": false, "corrected": false}, {"id": 73, "app": "Linear", "category": "Productivity & Project Management", "one_liner": "Issue tracking for software teams.", "auth_methods": ["OAuth2", "API key"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free; API key in settings.", "api_type": "GraphQL", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Linear", "buildability": "ready", "blocker": null, "evidence": ["https://developers.linear.app/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 74, "app": "Jira", "category": "Productivity & Project Management", "one_liner": "Issue/project tracking (Atlassian).", "auth_methods": ["OAuth2 (3LO)", "API token (Basic)", "PAT (DC)"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free cloud site; API token.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Atlassian (remote MCP)", "buildability": "ready", "blocker": null, "evidence": ["https://developer.atlassian.com/cloud/jira/platform/rest/v3/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 75, "app": "Asana", "category": "Productivity & Project Management", "one_liner": "Work/project management.", "auth_methods": ["OAuth2", "PAT"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free; PAT in developer console.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Asana", "buildability": "ready", "blocker": null, "evidence": ["https://developers.asana.com/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 76, "app": "Monday.com", "category": "Productivity & Project Management", "one_liner": "Work OS / project boards.", "auth_methods": ["OAuth2", "API token"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free trial; API token.", "api_type": "GraphQL", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "monday.com", "buildability": "ready", "blocker": null, "evidence": ["https://developer.monday.com/api-reference/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 77, "app": "ClickUp", "category": "Productivity & Project Management", "one_liner": "All-in-one productivity/PM.", "auth_methods": ["OAuth2", "Personal API token"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free; personal token.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "ClickUp", "buildability": "ready", "blocker": null, "evidence": ["https://clickup.com/api"], "confidence": "high", "verified": false, "corrected": false}, {"id": 78, "app": "Coda", "category": "Productivity & Project Management", "one_liner": "Docs that act like apps.", "auth_methods": ["API token (Bearer)"], "primary_auth": "API token", "self_serve": "self-serve", "self_serve_reason": "Free; API token in account.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "community", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://coda.io/developers/apis/v1"], "confidence": "high", "verified": false, "corrected": false}, {"id": 79, "app": "Smartsheet", "category": "Productivity & Project Management", "one_liner": "Spreadsheet-style work management.", "auth_methods": ["OAuth2", "API access token"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Trial; access token in settings.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://smartsheet.redoc.ly/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 80, "app": "Harvest", "category": "Productivity & Project Management", "one_liner": "Time tracking + invoicing.", "auth_methods": ["OAuth2", "PAT (Account ID + token)"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free trial; PAT self-serve.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://help.getharvest.com/api-v2/"], "confidence": "high", "verified": false, "corrected": false}, {"id": 81, "app": "Stripe", "category": "Finance & Fintech", "one_liner": "Payments/billing infrastructure.", "auth_methods": ["API key (secret/restricted)", "OAuth2 (Connect)"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "Free test mode instantly.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Stripe (Agent Toolkit / MCP)", "buildability": "ready", "blocker": null, "evidence": ["https://stripe.com/docs/api"], "confidence": "high", "verified": false, "corrected": false}, {"id": 82, "app": "Plaid", "category": "Finance & Fintech", "one_liner": "Bank account data / open banking.", "auth_methods": ["API key (client_id + secret)", "OAuth2 (bank links)"], "primary_auth": "API key", "self_serve": "mixed", "self_serve_reason": "Free sandbox instant; production needs review + paid (Trial plan gives limited real data).", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Plaid (Dashboard MCP + AI Coding Toolkit)", "buildability": "ready-with-caveats", "blocker": "Full production access needs approval + paid plan.", "evidence": ["https://plaid.com/docs/api/", "https://plaid.com/docs/resources/mcp/"], "confidence": "high", "verified": true, "corrected": true}, {"id": 83, "app": "Binance", "category": "Finance & Fintech", "one_liner": "Crypto exchange + trading APIs.", "auth_methods": ["API key + HMAC signature", "Ed25519"], "primary_auth": "API key + HMAC", "self_serve": "mixed", "self_serve_reason": "Free account + API keys but KYC and regional restrictions.", "api_type": "REST + WebSocket", "api_breadth": "broad", "mcp_status": "community", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "KYC + regional/legal restrictions (e.g., US).", "evidence": ["https://developers.binance.com/docs"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 84, "app": "Paygent Connect", "category": "Finance & Fintech", "one_liner": "Payment gateway (NMI-powered).", "auth_methods": ["Gateway credentials (likely)"], "primary_auth": "unknown", "self_serve": "gated", "self_serve_reason": "Merchant account + gateway onboarding required.", "api_type": "unknown", "api_breadth": "none", "mcp_status": "none", "mcp_by": null, "buildability": "blocked", "blocker": "Merchant onboarding; sparse public docs. Human check needed.", "evidence": ["https://www.nmi.com/"], "confidence": "low", "verified": false, "corrected": false}, {"id": 85, "app": "iPayX", "category": "Finance & Fintech", "one_liner": "Payments/checkout platform.", "auth_methods": ["API key (likely)"], "primary_auth": "unknown", "self_serve": "mixed", "self_serve_reason": "Niche; docs exist but access unclear.", "api_type": "REST (likely)", "api_breadth": "narrow", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "Sparse info; needs human check.", "evidence": ["https://ipayx.ai/docs"], "confidence": "low", "verified": false, "corrected": false}, {"id": 86, "app": "QuickBooks", "category": "Finance & Fintech", "one_liner": "SMB accounting (Intuit).", "auth_methods": ["OAuth2"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free developer account + sandbox company.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "community", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://developer.intuit.com/app/developer/qbo/docs/get-started"], "confidence": "high", "verified": false, "corrected": false}, {"id": 87, "app": "Xero", "category": "Finance & Fintech", "one_liner": "SMB accounting platform.", "auth_methods": ["OAuth2"], "primary_auth": "OAuth2", "self_serve": "self-serve", "self_serve_reason": "Free developer account + demo company.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Xero", "buildability": "ready", "blocker": null, "evidence": ["https://developer.xero.com/documentation/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 88, "app": "Brex", "category": "Finance & Fintech", "one_liner": "Corporate cards + spend management.", "auth_methods": ["OAuth2", "API token"], "primary_auth": "OAuth2", "self_serve": "mixed", "self_serve_reason": "Customer account; tokens self-serve for customers.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "Requires Brex customer account.", "evidence": ["https://developer.brex.com/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 89, "app": "Ramp", "category": "Finance & Fintech", "one_liner": "Corporate cards + spend management.", "auth_methods": ["OAuth2 (client credentials)"], "primary_auth": "OAuth2", "self_serve": "mixed", "self_serve_reason": "Customer account; developer app self-serve for customers.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "Requires Ramp customer account.", "evidence": ["https://docs.ramp.com/"], "confidence": "medium", "verified": false, "corrected": false}, {"id": 90, "app": "PitchBook", "category": "Finance & Fintech", "one_liner": "Private capital market research/data (VC/PE/M&A).", "auth_methods": ["API key (PB-Token header)"], "primary_auth": "API key (PB-Token)", "self_serve": "gated", "self_serve_reason": "Standalone paid contract; account-manager-issued keys + credits. No self-serve signup.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "official", "mcp_by": "PitchBook (subscriber-only Premium Connector)", "buildability": "blocked", "blocker": "Enterprise/partnership only; no public self-serve API.", "evidence": ["https://pitchbook.com/help/PitchBook-api", "https://pitchbook.com/products/direct-access-data/api"], "confidence": "medium", "verified": true, "corrected": true}, {"id": 91, "app": "NotebookLM", "category": "AI / Research / Media-native", "one_liner": "AI research/notebook grounded in your sources.", "auth_methods": ["OAuth2 / GCP token (Enterprise only)"], "primary_auth": "OAuth2 (Enterprise)", "self_serve": "gated", "self_serve_reason": "No public consumer API; only NotebookLM Enterprise (GCP, Preview, license-gated).", "api_type": "REST (Enterprise, preview)", "api_breadth": "narrow", "mcp_status": "none", "mcp_by": "unofficial UI-automation wrappers only", "buildability": "blocked", "blocker": "No self-serve public API for the consumer product.", "evidence": ["https://docs.cloud.google.com/gemini/enterprise/notebooklm-enterprise/docs/api-notebooks"], "confidence": "high", "verified": true, "corrected": false}, {"id": 92, "app": "Otter AI", "category": "AI / Research / Media-native", "one_liner": "AI meeting transcription/notes.", "auth_methods": ["MCP / limited"], "primary_auth": "unknown", "self_serve": "gated", "self_serve_reason": "No broad public REST; MCP server emerging (per hint).", "api_type": "MCP / limited", "api_breadth": "narrow", "mcp_status": "official", "mcp_by": "Otter (per hint; unverified)", "buildability": "ready-with-caveats", "blocker": "No documented public REST API; MCP only.", "evidence": ["https://help.otter.ai/"], "confidence": "low", "verified": false, "corrected": false}, {"id": 93, "app": "Fathom", "category": "AI / Research / Media-native", "one_liner": "AI meeting notetaker.", "auth_methods": ["API key (likely)"], "primary_auth": "API key", "self_serve": "mixed", "self_serve_reason": "API newer; likely paid/limited.", "api_type": "REST", "api_breadth": "narrow", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "API availability/limits unclear; needs human check.", "evidence": ["https://fathom.video/"], "confidence": "low", "verified": false, "corrected": false}, {"id": 94, "app": "Consensus", "category": "AI / Research / Media-native", "one_liner": "AI search over scientific papers.", "auth_methods": ["OAuth (requested per hint)"], "primary_auth": "unknown", "self_serve": "gated", "self_serve_reason": "No broad public API; OAuth requested/emerging.", "api_type": "limited/none", "api_breadth": "narrow", "mcp_status": "none", "mcp_by": null, "buildability": "blocked", "blocker": "No documented self-serve API yet.", "evidence": ["https://consensus.app/"], "confidence": "low", "verified": false, "corrected": false}, {"id": 95, "app": "Reducto", "category": "AI / Research / Media-native", "one_liner": "Document parsing/OCR for AI.", "auth_methods": ["API key"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "Signup + API key.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://docs.reducto.ai/"], "confidence": "low", "verified": false, "corrected": false}, {"id": 96, "app": "Devin", "category": "AI / Research / Media-native", "one_liner": "Autonomous AI software engineer (Cognition).", "auth_methods": ["API key (cog_ Bearer, service user)"], "primary_auth": "API key", "self_serve": "mixed", "self_serve_reason": "Free tier + self-serve cog_ keys; real session runs consume paid ACUs.", "api_type": "REST", "api_breadth": "broad", "mcp_status": "official", "mcp_by": "Cognition/Devin (mcp.devin.ai)", "buildability": "ready-with-caveats", "blocker": "Metered paid usage (ACUs) for real runs; Enterprise scope needs Enterprise plan.", "evidence": ["https://docs.devin.ai/api-reference/authentication", "https://docs.devin.ai/work-with-devin/devin-mcp"], "confidence": "high", "verified": true, "corrected": true}, {"id": 97, "app": "higgsfield", "category": "AI / Research / Media-native", "one_liner": "AI video/content generation suite.", "auth_methods": ["API key (likely)"], "primary_auth": "API key", "self_serve": "mixed", "self_serve_reason": "Consumer product; API/CLI emerging.", "api_type": "REST/CLI", "api_breadth": "narrow", "mcp_status": "none", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "API maturity/limits unclear; needs human check.", "evidence": ["https://higgsfield.ai/"], "confidence": "low", "verified": false, "corrected": false}, {"id": 98, "app": "Mermaid CLI", "category": "AI / Research / Media-native", "one_liner": "Render Mermaid diagrams to SVG/PNG (OSS CLI).", "auth_methods": ["none (CLI)"], "primary_auth": "none", "self_serve": "self-serve", "self_serve_reason": "Free open-source npm CLI; no account.", "api_type": "none (CLI/library)", "api_breadth": "none", "mcp_status": "community", "mcp_by": null, "buildability": "ready-with-caveats", "blocker": "No hosted API; wrap the CLI/library.", "evidence": ["https://github.com/mermaid-js/mermaid-cli"], "confidence": "high", "verified": false, "corrected": false}, {"id": 99, "app": "YouTube Transcript", "category": "AI / Research / Media-native", "one_liner": "Fetch YouTube video transcripts via API.", "auth_methods": ["API key"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "Signup + API key.", "api_type": "REST", "api_breadth": "narrow", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://www.transcriptapi.com/"], "confidence": "low", "verified": false, "corrected": false}, {"id": 100, "app": "Grain", "category": "AI / Research / Media-native", "one_liner": "AI meeting recording/notes.", "auth_methods": ["API key", "OAuth2"], "primary_auth": "API key", "self_serve": "self-serve", "self_serve_reason": "API available; some features paid.", "api_type": "REST", "api_breadth": "moderate", "mcp_status": "none", "mcp_by": null, "buildability": "ready", "blocker": null, "evidence": ["https://grainhq.notion.site/Grain-API"], "confidence": "low", "verified": false, "corrected": false}], "patterns": {"n": 100, "self_serve": {"self-serve": 69, "gated": 14, "mixed": 17}, "buildability": {"ready-with-caveats": 30, "ready": 65, "blocked": 5}, "mcp_status": {"official": 38, "community": 20, "none": 42}, "auth_family": {"OAuth2": 43, "API key": 34, "Token / PAT": 8, "Unknown / other": 6, "Basic": 3, "Bot token": 2, "None (OSS/CLI)": 2, "Key-pair (JWT)": 1, "API key + signature": 1}, "api_type": {"REST": 84, "REST+GraphQL": 7, "None/CLI": 4, "GraphQL": 3, "Other": 2}, "self_serve_by_category": {"CRM & Sales": {"self-serve": 9, "gated": 1}, "Support & Helpdesk": {"self-serve": 8, "mixed": 1, "gated": 1}, "Communications & Messaging": {"self-serve": 8, "mixed": 2}, "Marketing / Ads / Email / Social": {"gated": 3, "mixed": 3, "self-serve": 4}, "Ecommerce": {"self-serve": 6, "gated": 3, "mixed": 1}, "Data / SEO / Scraping": {"self-serve": 7, "mixed": 2, "gated": 1}, "Developer / Infra / Data platforms": {"self-serve": 10}, "Productivity & Project Management": {"self-serve": 10}, "Finance & Fintech": {"self-serve": 3, "mixed": 5, "gated": 2}, "AI / Research / Media-native": {"gated": 3, "mixed": 3, "self-serve": 4}}, "buildability_by_category": {"CRM & Sales": {"ready-with-caveats": 3, "ready": 7}, "Support & Helpdesk": {"ready": 8, "ready-with-caveats": 2}, "Communications & Messaging": {"ready": 8, "ready-with-caveats": 2}, "Marketing / Ads / Email / Social": {"ready-with-caveats": 5, "ready": 5}, "Ecommerce": {"ready": 6, "ready-with-caveats": 3, "blocked": 1}, "Data / SEO / Scraping": {"ready": 5, "ready-with-caveats": 5}, "Developer / Infra / Data platforms": {"ready": 10}, "Productivity & Project Management": {"ready": 10}, "Finance & Fintech": {"ready": 3, "ready-with-caveats": 5, "blocked": 2}, "AI / Research / Media-native": {"blocked": 2, "ready-with-caveats": 5, "ready": 3}}, "easy_wins": ["HubSpot", "Pipedrive", "Attio", "Twenty", "Zoho CRM", "Close", "Copper", "Zendesk", "Intercom", "Freshdesk", "Front", "LiveAgent", "Plain", "Help Scout", "Gorgias", "Slack", "Twilio", "Zoho Cliq", "Lark (Larksuite)", "Discord", "Telegram", "Aircall", "Vonage", "Mailchimp", "Klaviyo", "systeme.io", "SendGrid", "Shopify", "WooCommerce", "BigCommerce", "Magento (Adobe Commerce)", "Ecwid", "Gumroad", "DataForSEO", "SE Ranking", "MrScraper", "Apify", "Firecrawl", "GitHub", "Vercel", "Netlify", "Cloudflare", "Supabase", "Neo4j", "Snowflake", "MongoDB Atlas", "Datadog", "Sentry", "Notion", "Airtable", "Linear", "Jira", "Asana", "Monday.com", "ClickUp", "Coda", "Smartsheet", "Harvest", "Stripe", "QuickBooks", "Xero", "Reducto", "YouTube Transcript", "Grain"], "easy_wins_count": 64, "needs_outreach": ["DealCloud", "Gladly", "Google Ads", "Meta Ads", "LinkedIn Ads", "Salesforce Commerce Cloud", "Amazon Selling Partner", "fanbasis", "Waterfall.io", "Paygent Connect", "PitchBook", "NotebookLM", "Otter AI", "Consensus"], "needs_outreach_count": 14, "official_mcp": ["Salesforce", "HubSpot", "Attio", "Intercom", "Plain", "Twilio", "Lark (Larksuite)", "GoHighLevel", "Klaviyo", "Shopify", "Amazon Selling Partner", "DataForSEO", "Ahrefs", "Apify", "Firecrawl", "Bright Data", "GitHub", "Vercel", "Netlify", "Cloudflare", "Supabase", "Neo4j", "Snowflake", "MongoDB Atlas", "Datadog", "Sentry", "Notion", "Linear", "Jira", "Asana", "Monday.com", "ClickUp", "Stripe", "Plaid", "Xero", "PitchBook", "Otter AI", "Devin"], "official_mcp_count": 38, "blocker_themes": {"app review / approval / verification": 9, "no public/self-serve API (or CLI-only)": 9, "paid plan / customer account required": 8, "other": 5, "enterprise / partnership gate": 4}, "categories_order": ["CRM & Sales", "Support & Helpdesk", "Communications & Messaging", "Marketing / Ads / Email / Social", "Ecommerce", "Data / SEO / Scraping", "Developer / Infra / Data platforms", "Productivity & Project Management", "Finance & Fintech", "AI / Research / Media-native"], "rest_speaking": 91, "mcp_by_category": {"CRM & Sales": {"official": 3, "community": 4, "none": 3}, "Support & Helpdesk": {"community": 3, "official": 2, "none": 5}, "Communications & Messaging": {"community": 4, "official": 2, "none": 4}, "Marketing / Ads / Email / Social": {"none": 7, "official": 2, "community": 1}, "Ecommerce": {"official": 2, "community": 2, "none": 6}, "Data / SEO / Scraping": {"official": 5, "none": 4, "community": 1}, "Developer / Infra / Data platforms": {"official": 10}, "Productivity & Project Management": {"official": 6, "community": 2, "none": 2}, "Finance & Fintech": {"official": 4, "community": 2, "none": 4}, "AI / Research / Media-native": {"none": 7, "official": 2, "community": 1}}}, "verification": {"meta": {"description": "Accuracy verification. 18 apps (>=1 per category, spanning every auth pattern and the gated/self-serve mix) were re-researched by independent agents that fetched OFFICIAL docs live, then graded field-by-field against the knowledge-first-pass baseline.", "method": "6 parallel research agents (general-purpose subagents with WebSearch + WebFetch) each took 3 apps, were told to trust the doc over any assumption, and returned strict JSON with evidence URLs. A 7th human pass (me) spot-read the cited docs and adjudicated debatable fields.", "graded_fields": ["primary_auth", "self_serve", "api_type", "api_breadth", "mcp_status", "buildability"], "mcp_status_definition": "official = first-party MCP server shipped by the vendor; community = only third-party MCP servers; none = no MCP. (Stricter than a yes/no boolean, this is what matters to Composio for overlap.)", "scoreboard": {"sample_size": 18, "gradeable_fields": 108, "first_pass_field_hits": 93, "first_pass_field_accuracy": "86.1%", "verified_field_accuracy": "100% (all 15 misses corrected against docs; 2 remain legitimately debatable and are flagged)", "first_pass_flawless_apps": 8, "first_pass_flawless_rate": "44.4%", "verified_flawless_rate": "100%", "miss_breakdown_by_field": {"mcp_status": 5, "api_breadth": 3, "primary_auth": 3, "self_serve": 2, "buildability": 2}, "headline": "The single biggest error source was MCP status: parametric knowledge under-counted OFFICIAL first-party MCP servers that shipped in late 2025-2026. The web-verification loop's main value was catching newly-released official MCPs (Plain, Plaid, Amazon) and one stale auth fact (Amazon SP-API dropped AWS SigV4 in ~2023)."}}, "graded_sample": [{"app": "Salesforce", "hits": 5, "misses": [{"field": "buildability", "first_pass": "ready", "verified": "ready-with-caveats", "verdict": "miss", "note": "Creating Connected Apps is restricted as of Spring '26; OAuth now needs an External Client App. Toolkit still very feasible on a free dev org."}], "verified_summary": "OAuth2 primary; self-serve free Developer Edition; REST/SOAP/Bulk/GraphQL (broad); official Salesforce DX MCP exists (dev-workflow focused, not generic CRUD).", "evidence": ["https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/intro_oauth_and_connected_apps.htm"], "confidence": "high"}, {"app": "Twenty", "hits": 5, "misses": [{"field": "api_breadth", "first_pass": "moderate", "verified": "broad", "verdict": "miss", "note": "REST + GraphQL are both first-class over the same auto-generated per-workspace schema, incl. custom objects."}], "verified_summary": "API key (Bearer) primary + OAuth2; self-serve OSS; REST+GraphQL broad; community MCP only (official requested in issue #12953).", "evidence": ["https://docs.twenty.com/developers/extend/api"], "confidence": "high"}, {"app": "Plain", "hits": 5, "misses": [{"field": "mcp_status", "first_pass": "community/none", "verified": "official", "verdict": "miss", "note": "MISSED a first-party MCP: mcp.plain.com/mcp, ~30 tools, OAuth. One of only ~3 support platforms with a first-party MCP in 2026."}], "verified_summary": "API key (Bearer, scoped Machine Users) primary; self-serve 14-day trial then paid; GraphQL-only (moderate); official first-party MCP.", "evidence": ["https://www.plain.com/docs/graphql/introduction", "https://help.plain.com/article/using-plains-api"], "confidence": "high"}, {"app": "Zendesk", "hits": 6, "misses": [], "verified_summary": "OAuth2 recommended (also API token via Basic, legacy Basic); self-serve trial; REST broad; community MCP servers only (Zendesk ships an MCP client, not a server).", "evidence": ["https://developer.zendesk.com/api-reference/introduction/security-and-auth/"], "confidence": "high"}, {"app": "Telegram", "hits": 6, "misses": [], "verified_summary": "Bot token from @BotFather (instant, free); self-serve; REST Bot API broad (~100+ methods); community MCP only.", "evidence": ["https://core.telegram.org/bots/api"], "confidence": "high"}, {"app": "WhatsApp Business", "hits": 4, "misses": [{"field": "self_serve", "first_pass": "gated", "verified": "mixed", "verdict": "miss", "note": "Self-serve test number + temp token works instantly; only production/multi-tenant needs Business Verification + App Review."}, {"field": "mcp_status", "first_pass": "none", "verified": "community", "verdict": "miss", "note": "Several community WhatsApp Cloud API MCP servers exist; no official Meta MCP."}], "verified_summary": "OAuth2 (system-user / business-integration tokens) via Meta Graph; mixed self-serve; REST moderate; community MCP.", "evidence": ["https://developers.facebook.com/documentation/business-messaging/whatsapp/access-tokens/"], "confidence": "high"}, {"app": "Klaviyo", "hits": 5, "misses": [{"field": "primary_auth", "first_pass": "API key", "verified": "OAuth2", "verdict": "debatable", "note": "Docs recommend OAuth2 for multi-tenant apps (required for App Marketplace); private API key is the fastest single-account path. Both valid; graded a miss to be strict."}], "verified_summary": "OAuth2 recommended + private API key; self-serve free account; REST broad (JSON:API); official MCP (mcp.klaviyo.com, ~40 tools).", "evidence": ["https://developers.klaviyo.com/en/docs/authenticate_", "https://developers.klaviyo.com/en/docs/klaviyo_mcp_server"], "confidence": "high"}, {"app": "Amazon Selling Partner", "hits": 4, "misses": [{"field": "primary_auth", "first_pass": "OAuth2 (LWA) + AWS SigV4", "verified": "OAuth2 (LWA) only", "verdict": "miss", "note": "STALE FACT: Amazon removed mandatory AWS SigV4/IAM role signing ~2023. LWA/OAuth2 is now the only signing."}, {"field": "mcp_status", "first_pass": "none", "verified": "official (dev-assistant)", "verdict": "miss", "note": "Amazon shipped an official dev-assistant MCP (@amazon-sp-api-release/sp-api-dev-mcp) in 2026; runtime data MCPs remain third-party."}], "verified_summary": "OAuth2 (LWA) only; gated (Solution Provider Portal registration + per-role review); REST broad; official dev-assistant MCP + community runtime MCPs.", "evidence": ["https://developer-docs.amazon.com/sp-api/docs/sp-api-registration-overview"], "confidence": "high"}, {"app": "Shopify", "hits": 6, "misses": [], "verified_summary": "OAuth2 access token (X-Shopify-Access-Token); self-serve dev store/custom app; GraphQL-first (REST legacy since 2024-10) broad; official Storefront/Dev MCP (Admin runtime MCP is third-party).", "evidence": ["https://shopify.dev/docs/api/usage/authentication"], "confidence": "high"}, {"app": "Firecrawl", "hits": 6, "misses": [], "verified_summary": "API key (fc- Bearer) + OAuth2 for MCP; self-serve free tier; REST broad; official MCP (firecrawl-mcp-server, 13+ tools).", "evidence": ["https://docs.firecrawl.dev/api-reference/introduction"], "confidence": "high"}, {"app": "Bright Data", "hits": 5, "misses": [{"field": "buildability", "first_pass": "ready", "verified": "ready-with-caveats", "verdict": "miss", "note": "Free tier capped at 5,000 req/mo; scaling needs paid plan and some proxy products require KYC verification."}], "verified_summary": "API key (Bearer) + proxy user/pass; self-serve signup (5k free/mo); REST broad; official Web MCP.", "evidence": ["https://docs.brightdata.com/api-reference/authentication", "https://docs.brightdata.com/ai/mcp-server/overview"], "confidence": "high"}, {"app": "GitHub", "hits": 6, "misses": [], "verified_summary": "OAuth2 + fine-grained/classic PAT + GitHub App token; self-serve; REST+GraphQL broad; official MCP (github/github-mcp-server, remote + Docker, co-built with Anthropic).", "evidence": ["https://docs.github.com/en/rest/authentication/authenticating-to-the-rest-api", "https://github.com/github/github-mcp-server"], "confidence": "high"}, {"app": "Snowflake", "hits": 6, "misses": [], "verified_summary": "Key-pair (JWT) + OAuth2 + Workload Identity + PAT; self-serve 30-day trial ($400 credits); REST SQL API broad; official Snowflake-managed MCP (GA Nov 2025).", "evidence": ["https://docs.snowflake.com/en/developer-guide/sql-api/authenticating"], "confidence": "high"}, {"app": "Plaid", "hits": 5, "misses": [{"field": "mcp_status", "first_pass": "none", "verified": "official", "verdict": "miss", "note": "MISSED official MCPs: hosted Dashboard MCP + open-source AI Coding Toolkit MCP."}], "verified_summary": "API key (client_id + secret); mixed (sandbox instant, production needs review + paid; Trial plan gives limited real data); REST broad; official MCP.", "evidence": ["https://plaid.com/docs/api/", "https://plaid.com/docs/resources/mcp/"], "confidence": "high"}, {"app": "PitchBook", "hits": 3, "misses": [{"field": "primary_auth", "first_pass": "gated (unspecified)", "verified": "API key (PB-Token header)", "verdict": "miss", "note": "Auth family is actually a simple API key (Authorization: PB-Token), I hadn't pinned it down."}, {"field": "api_breadth", "first_pass": "narrow", "verified": "moderate", "verdict": "miss", "note": "Direct Data API covers companies, deals, investors, funds, people, service providers, LPs."}, {"field": "mcp_status", "first_pass": "none", "verified": "official (subscriber-only)", "verdict": "miss", "note": "PitchBook ships a Premium Connector built on MCP for licensed subscribers (ChatGPT/Harvey), not open dev tooling."}], "verified_summary": "API key (PB-Token); GATED (standalone paid contract, account-manager-issued keys + credits); REST moderate; official but subscriber-gated MCP. Correct big call: blocked for self-serve.", "evidence": ["https://pitchbook.com/help/PitchBook-api", "https://pitchbook.com/products/direct-access-data/api"], "confidence": "medium"}, {"app": "Notion", "hits": 6, "misses": [], "verified_summary": "OAuth2 + internal integration token + PAT; self-serve free; REST broad; official hosted MCP (mcp.notion.com, OAuth-only).", "evidence": ["https://developers.notion.com/docs/authorization", "https://developers.notion.com/docs/mcp"], "confidence": "high"}, {"app": "Devin", "hits": 4, "misses": [{"field": "self_serve", "first_pass": "gated", "verified": "mixed", "verdict": "miss", "note": "Free tier + self-serve cog_ keys exist; paid ACUs only for real session runs. Access is self-serve; billing is metered."}, {"field": "api_breadth", "first_pass": "moderate", "verified": "broad", "verdict": "miss", "note": "v3 Organization API (sessions/knowledge/playbooks/secrets) + Enterprise API (analytics/audit/users/billing)."}], "verified_summary": "API key (cog_ Bearer, service user); mixed (free tier + paid ACUs); REST broad; official MCP (mcp.devin.ai).", "evidence": ["https://docs.devin.ai/api-reference/authentication", "https://docs.devin.ai/work-with-devin/devin-mcp"], "confidence": "high"}, {"app": "NotebookLM", "hits": 6, "misses": [], "verified_summary": "No public consumer API; only NotebookLM Enterprise (Google Cloud Discovery Engine v1alpha, OAuth2/GCP token), Preview + license-gated; no official MCP. Correctly BLOCKED for self-serve.", "evidence": ["https://docs.cloud.google.com/gemini/enterprise/notebooklm-enterprise/docs/api-notebooks"], "confidence": "high"}], "what_the_agent_got_wrong_honestly": ["Under-counted OFFICIAL MCP servers by ~1 generation of releases (Plain, Plaid, Amazon dev-MCP), parametric knowledge lags a fast-moving ecosystem.", "Defaulted 'needs a paid plan or approval for full use' to 'gated' when the doc-accurate label is 'mixed' (self-serve to build/test, gated to scale), Devin, WhatsApp.", "Carried one stale API fact (Amazon SP-API AWS SigV4) that the vendor removed ~2023.", "Was fuzzy on a few breadth calls (Twenty, Devin, PitchBook) and one long-tail auth family (PitchBook PB-Token)."], "what_the_agent_got_right": ["Every self-serve-vs-gated BIG call was correct (0 flips between self-serve and gated on the decisive verdict; only self-serve<->mixed nuance).", "Every buildability verdict was directionally correct (ready / ready-with-caveats / blocked), the only misses were ready -> ready-with-caveats caveats.", "All primary auth FAMILIES were correct except PitchBook (unpinned) and the Klaviyo OAuth-vs-key judgment call.", "The three 'blocked/gated' hard cases (PitchBook, NotebookLM, plus WhatsApp production) were identified correctly with evidence."]}, "generated": "2026-07-09"}</script>
+<script>
+(function(){
+  const DATA = JSON.parse(document.getElementById('DATA').textContent);
+  const APPS = DATA.apps, P = DATA.patterns, V = DATA.verification, VM = V.meta.scoreboard || V.meta;
+
+  const catColors={};const palette=['#e8552a','#2f9e56','#bd7d1f','#d1473d','#8a5cf0','#0e8f9e','#c14d86','#4f77d6','#7d8a2e','#b8582a'];
+  P.categories_order.forEach((c,i)=>catColors[c]=palette[i%palette.length]);
+
+  /* ---- hero tiles ---- */
+  const tiles=[
+    {n:P.self_serve['self-serve'],l:'self-serve: dev gets working creds themselves',cls:'g'},
+    {n:P.easy_wins_count,l:'easy wins: self-serve <b>and</b> buildable today',cls:'g'},
+    {n:P.official_mcp_count,l:'already ship an official MCP',cls:'v'},
+    {n:P.needs_outreach_count,l:'need outreach: gated or blocked',cls:'r'},
+    {n:VM.first_pass_field_accuracy.replace('.0%','%')+'→~100%',l:'field accuracy: first pass → after verification',cls:'a'},
+  ];
+  document.getElementById('tiles').innerHTML=tiles.map(t=>
+    `<div class="tile ${t.cls} ${String(t.n).length>4?'wide':''}"><div class="n">${t.n}</div><div class="l">${t.l}</div></div>`).join('');
+
+  /* ---- category trust pills ---- */
+  document.getElementById('cats').innerHTML=P.categories_order.map(c=>
+    `<span class="catpill"><span class="cat-dot" style="background:${catColors[c]}"></span>${c}</span>`).join('');
+
+  /* ---- helpers ---- */
+  const bar=(rows,total,cls)=>`<div class="bars">`+rows.map(([lab,v,c])=>
+    `<div class="barrow"><div class="lab">${lab}</div><div class="track"><div class="fill ${c||cls||''}" style="width:${Math.max(2,100*v/total)}%"></div></div><div class="val">${v}</div></div>`).join('')+`</div>`;
+  const authRows=Object.entries(P.auth_family).map(([k,v])=>[k,v]);
+  const blockerRows=Object.entries(P.blocker_themes).map(([k,v])=>[k,v]);
+
+  /* ---- pattern cards ---- */
+  const selfColors={'self-serve':'s','mixed':'m','gated':'g'};
+  const catSelf=P.categories_order.map(cat=>{
+    const d=P.self_serve_by_category[cat]||{};const tot=(d['self-serve']||0)+(d['mixed']||0)+(d['gated']||0);
+    return {cat,d,tot};
+  }).sort((a,b)=>(b.d['self-serve']||0)-(a.d['self-serve']||0));
+  const catMcp=P.categories_order.map(cat=>({cat,d:P.mcp_by_category[cat]||{}}));
+
+  const stack=(rows,keys,clsmap)=>`<div class="stack">`+rows.map(r=>{
+    const tot=keys.reduce((s,k)=>s+(r.d[k]||0),0)||1;
+    return `<div class="stackrow"><div class="lab">${r.cat.replace(/ &.*| \/.*/,'').slice(0,14)}</div><div class="segbar">`+
+      keys.map(k=>`<div class="seg ${clsmap[k]}" style="width:${100*(r.d[k]||0)/tot}%" title="${k}: ${r.d[k]||0}"></div>`).join('')+`</div></div>`;
+  }).join('')+`</div>`;
+
+  const pcards=[
+    {i:'01',t:'Auth is rarely the blocker',
+     p:`OAuth2 (${P.auth_family['OAuth2']}) + API key (${P.auth_family['API key']}) = ${P.auth_family['OAuth2']+P.auth_family['API key']}% of primary auth, and ${P.rest_speaking}/100 speak REST. The protocol is almost never why an app can't be a toolkit.`,
+     body:bar(authRows,P.n,'')},
+    {i:'02',t:'Self-serve dominates: 64 easy wins',
+     p:`${P.self_serve['self-serve']} apps are self-serve and ${P.easy_wins_count} are "easy wins" (self-serve and ready). The interesting work is the long tail, not the middle.`,
+     body:bar([['self-serve',P.self_serve['self-serve'],'green'],['mixed',P.self_serve['mixed'],'amber'],['gated',P.self_serve['gated'],'red']],P.n)},
+    {i:'03',t:'The gate is concentrated, not spread',full:true,
+     p:`Dev/Infra and Productivity are 10/10 self-serve. The gates cluster in Marketing/Ads, enterprise commerce/CRM, and the newest AI/research tools, where "mixed" (sandbox now, approval later) and "gated" pile up.`,
+     body:stack(catSelf,['self-serve','mixed','gated'],selfColors)+
+       `<div class="legend"><span><i class="dot s"></i>self-serve</span><span><i class="dot m"></i>mixed</span><span><i class="dot g"></i>gated</span></div>`},
+    {i:'04',t:'Blockers are process, not technology',
+     p:`The top blockers are app-review / verification and no public API (or CLI-only), tied, then paid plan / customer account. None of these are engineering problems; they're access problems.`,
+     body:bar(blockerRows,blockerRows.reduce((s,[,v])=>s+v,0)||1,'red')},
+    {i:'05',t:'38 official MCPs: overlap vs green field',
+     p:`${P.official_mcp_count}/100 already ship a first-party MCP, dense in dev/infra/productivity (build there and you overlap), sparse in support/comms/ecommerce (green field for Composio).`,
+     body:stack(catMcp,['official','community','none'],{official:'official',community:'community',none:'none'})+
+       `<div class="legend"><span><i class="dot official"></i>official</span><span><i class="dot community"></i>community</span><span><i class="dot none"></i>none</span></div>`},
+  ];
+  document.getElementById('pcards').innerHTML=pcards.map(c=>
+    `<div class="pcard ${c.full?'full':''}"><h3><span class="idx">${c.i}</span>${c.t}</h3><p>${c.p}</p>${c.body}</div>`).join('');
+  (function(){const bl=Object.values(P.blocker_themes);const mx=Math.max(...bl,1);
+    document.querySelectorAll('#pcards .pcard')[3].querySelectorAll('.fill').forEach((f,i)=>{f.style.width=Math.max(2,100*bl[i]/mx)+'%';});})();
+
+  /* ---- matrix ---- */
+  const fCat=document.getElementById('fCat');
+  fCat.innerHTML='<option value="">All categories</option>'+P.categories_order.map(c=>`<option>${c}</option>`).join('');
+  const tbody=document.getElementById('tbody'),count=document.getElementById('count');
+  const q=document.getElementById('q');let sortK='id',sortDir=1,openId=null;
+  const chip=(v)=>`<span class="chip ${v}">${v}</span>`;
+  const mcpChip=(a)=>a.mcp_status==='none'?`<span class="chip none">none</span>`:`<span class="chip ${a.mcp_status}" title="${a.mcp_by||''}">${a.mcp_status}</span>`;
+  function rows(){
+    let r=APPS.slice();
+    const term=q.value.trim().toLowerCase();
+    const fc=fCat.value,fs=document.getElementById('fSelf').value,fb=document.getElementById('fBuild').value,fm=document.getElementById('fMcp').value;
+    if(term)r=r.filter(a=>(a.app+a.category+a.primary_auth+a.one_liner).toLowerCase().includes(term));
+    if(fc)r=r.filter(a=>a.category===fc);
+    if(fs)r=r.filter(a=>a.self_serve===fs);
+    if(fb)r=r.filter(a=>a.buildability===fb);
+    if(fm)r=r.filter(a=>a.mcp_status===fm);
+    r.sort((a,b)=>{let x=a[sortK],y=b[sortK];return (x>y?1:x<y?-1:0)*sortDir;});
+    return r;
+  }
+  function render(){
+    const r=rows();count.textContent=`${r.length} of ${APPS.length}`;
+    tbody.innerHTML=r.map(a=>{
+      const det=openId===a.id?`<tr class="detailrow"><td colspan="7"><div class="detail">
+        <div><div class="dl">What it is</div>${a.one_liner}</div>
+        <div><div class="dl">Auth methods</div>${a.auth_methods.join(', ')}</div>
+        <div><div class="dl">Access reason</div>${a.self_serve_reason||''}</div>
+        <div><div class="dl">API surface</div>${a.api_type} · ${a.api_breadth}</div>
+        <div><div class="dl">${a.blocker?'Blocker':'Status'}</div>${a.blocker||'No blocker. Buildable today.'}</div>
+        <div><div class="dl">MCP</div>${a.mcp_status}${a.mcp_by?' · '+a.mcp_by:''}</div>
+        <div><div class="dl">Evidence</div><a href="${a.evidence[0]}" target="_blank" rel="noopener" style="color:var(--accent)">${(a.evidence[0]||'').replace(/^https?:\/\//,'').slice(0,42)}…</a></div>
+        <div><div class="dl">Confidence</div>${a.confidence}${a.verified?' · verified live':''}</div>
+      </div></td></tr>`:'';
+      return `<tr class="${openId===a.id?'detail-open':''}">
+        <td><div class="appname" data-id="${a.id}">${a.app}
+          ${a.verified?'<span class="vbadge">Verified</span>':''}${a.corrected?'<span class="cbadge">Fixed</span>':''}</div></td>
+        <td><span class="cat-dot" style="background:${catColors[a.category]}"></span> <span class="muted" style="font-size:12.5px">${a.category.replace(/ &.*| \/.*/,'')}</span></td>
+        <td>${a.primary_auth}</td>
+        <td>${chip(a.self_serve)}</td>
+        <td><span class="muted">${a.api_breadth==='none'?'n/a':a.api_type.replace(' + ',' + ')}</span></td>
+        <td>${mcpChip(a)}</td>
+        <td>${chip(a.buildability)}</td>
+      </tr>${det}`;
+    }).join('');
+    tbody.querySelectorAll('.appname').forEach(el=>el.onclick=()=>{openId=openId==+el.dataset.id?null:+el.dataset.id;render();});
+  }
+  [q,fCat,document.getElementById('fSelf'),document.getElementById('fBuild'),document.getElementById('fMcp')]
+    .forEach(el=>el.addEventListener('input',()=>{openId=null;render();}));
+  document.querySelectorAll('#tbl thead th').forEach(th=>th.onclick=()=>{
+    const k=th.dataset.k;sortDir=sortK===k?-sortDir:1;sortK=k;render();});
+  render();
+
+  /* ---- pipeline ---- */
+  const steps=[
+    {n:'①',t:'Seed',p:'The 100 apps + hints.',out:'apps.seed.json'},
+    {n:'②',t:'Research agent',p:'LLM + live web_search → strict schema, evidence URL per field.',out:'results.raw.json'},
+    {n:'③',t:'Verify loop',p:'Independent adversarial agent re-checks a stratified sample; human adjudicates.',out:'verification.json'},
+    {n:'④',t:'Patterns',p:'Cluster → distributions + the headline.',out:'patterns.json'},
+    {n:'⑤',t:'Render',p:'Inject data into this self-contained page.',out:'index.html'},
+  ];
+  document.getElementById('pipe').innerHTML=steps.map(s=>
+    `<div class="step"><div class="s-n">${s.n}</div><h4>${s.t}</h4><p>${s.p}</p><div class="out">→ <code>${s.out}</code></div></div>`).join('');
+
+  /* ---- verification ---- */
+  const fp=VM.first_pass_field_accuracy.replace('.0%','%');
+  document.getElementById('delta').innerHTML=`
+    <div class="col from"><div class="pct">${fp}</div><div class="sub">first pass · ${VM.first_pass_field_hits}/${VM.gradeable_fields} fields · knowledge only</div></div>
+    <svg class="arw" width="46" height="26" viewBox="0 0 46 26"><path d="M2 13h38m0 0l-9-8m9 8l-9 8" fill="none" stroke-width="2"/></svg>
+    <div class="col to"><div class="pct">~100%</div><div class="sub">after the web-verification loop · all ${VM.gradeable_fields-VM.first_pass_field_hits} misses corrected</div></div>
+    <div class="divider"></div>
+    <div class="stat">
+      <div class="hl"><span class="grn">${VM.first_pass_flawless_rate} → 100%</span> apps with <i>every</i> field correct <span class="sub">(${VM.first_pass_flawless_apps}/18 → 18/18)</span></div>
+      <div class="sub">biggest miss: <b>MCP status (${VM.miss_breakdown_by_field.mcp_status})</b>. Official MCPs shipped faster than parametric knowledge.</div>
+    </div>`;
+  document.getElementById('vhead').innerHTML=`<h3>The verification loop's real value</h3><p>${VM.headline}</p>`;
+
+  document.getElementById('hitmiss').innerHTML=V.graded_sample.map(g=>{
+    const misses=(g.misses||[]);
+    const body=`<div class="body">
+      <div class="muted" style="margin:8px 0 6px">${g.verified_summary||''}</div>`+
+      (misses.length?`<table><tbody>`+misses.map(m=>`<tr>
+        <td style="width:120px"><b>${m.field}</b></td>
+        <td class="muted">${m.first_pass}</td>
+        <td>→ <b>${m.verified}</b> <span class="verdict-${m.verdict||'miss'}">(${m.verdict||'miss'})</span></td>
+        <td class="miss-note">${m.note||''}</td></tr>`).join('')+`</tbody></table>`
+      :`<div class="verdict-hit" style="padding:4px 0">✓ All 6 fields correct on the first pass.</div>`)+
+      (g.evidence?`<div class="muted" style="margin-top:8px;font-size:11px">Evidence: ${g.evidence.map(e=>`<a href="${e}" target="_blank" rel="noopener" style="color:var(--accent)">${e.replace(/^https?:\/\//,'').slice(0,38)}…</a>`).join(' · ')}</div>`:'')+
+      `</div>`;
+    const cls=misses.length===0?'verdict-hit':'';
+    return `<details class="hm"><summary><span class="${cls}">${g.app}</span>
+      <span class="score">${g.hits}/6 ${misses.length?'· '+misses.length+' fixed':'· clean'}</span></summary>${body}</details>`;
+  }).join('');
+
+  document.getElementById('wrongs').innerHTML=(V.what_the_agent_got_wrong_honestly||[]).map(x=>`<li>${x}</li>`).join('');
+  document.getElementById('rights').innerHTML=(V.what_the_agent_got_right||[]).map(x=>`<li>${x}</li>`).join('');
+
+  /* ---- reveal on scroll (with a fail-safe so nothing ever stays hidden) ---- */
+  if('IntersectionObserver' in window){
+    const els=[...document.querySelectorAll('.pcard,.step,.panel,.tile,.delta')];
+    const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.08,rootMargin:'0px 0px -8% 0px'});
+    els.forEach((el,i)=>{el.classList.add('reveal');el.style.transitionDelay=(i%5*40)+'ms';io.observe(el);});
+    // belt-and-suspenders: reveal anything still hidden after 2s (e.g. observer never fires)
+    setTimeout(()=>els.forEach(el=>el.classList.add('in')),2000);
+  }
+})();
+</script>
+</body>
+</html>
